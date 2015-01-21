@@ -13,6 +13,7 @@ void update_input(client_struct* c, gamestate_struct* gs) {
 }
 
 void update(gamestate_struct* gs) {
+	//delegates to other files
 	errx(-1, "update not implemented");
 }
 
