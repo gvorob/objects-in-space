@@ -23,7 +23,7 @@ void setup_ncurses(){
   noecho();		//keypresses don't show up
   curs_set(FALSE);	//don't show cursor
   cbreak();		//get key one at a time
-  nodelay(stdscr, TRUE)	//makes it so getch doesn't wait for an input, instead gives ERR
+  nodelay(stdscr, TRUE);	//makes it so getch doesn't wait for an input, instead gives ERR
   //errx(-1, "setup_ncurses not implemented");
 }
 
@@ -67,7 +67,7 @@ void get_render(){
   move(0, 0);		//moves to start
   int i = 0;
   while (i > SCREEN_WIDTH * SCREEN_HEIGHT){
-    addch(render.renderdata[i]);
+    addch(render.render_data[i]);
   }
   //  errx(-1, "get_render not implemented");
 }
