@@ -1,4 +1,8 @@
 #include "client.h"
+#include "main_structs.h"
+#include <curses.h>
+
+struct client_render_struct render;
 
 void init_client(char* ip, char* port){
   /*
@@ -14,11 +18,14 @@ int connect_to(char* ip, char* port){
   errx(-1, "connect_to not implemented");
 }
 
-//setup_ncurses(???){
-/*
-  errx(-1, "setup_ncurses not implemented");
-*/
-//}
+void setup_ncurses(){
+  initscr();		//initializes screen for ncurses
+  noecho();		//keypresses don't show up
+  curs_set(FALSE);	//don't show cursor
+  cbreak();		//get key one at a time
+  nodelay(stdscr, TRUE);	//makes it so getch doesn't wait for an input, instead gives ERR
+  //errx(-1, "setup_ncurses not implemented");
+}
 
 void client_main_loop(int socket_d){
   //calls send_input(), get_render();
@@ -26,17 +33,41 @@ void client_main_loop(int socket_d){
 }
 
 void send_input(){
-	//prepare this for george to send
-	client_input_struct cis;
+  //this only does it for the current character being pressed
+  //also, ncurses can only do 1 key at a time
+  client_input_struct input;
+  char ch = getch();
+  if (ch == UP){
+    input.up = 1;
+  }
+  if (ch == DOWN){
+    input.down = 1;
+  }
+  if (ch == LEFT){
+    input.left = 1;
+  }
+  if (ch == RIGHT){
+    input.right = 1;
+  }
+  if (ch == CONSOLE_LOCK){
+    input.console_lock = 1;
+  }
 
-	//makes/sends client_input_state_struct;
-	errx(-1, "send_input not implemented");
+  //NEEDS TO SEND THE INPUT
+
+  //makes/sends client_input_state_struct;
+  //errx(-1, "send_input not implemented");
 }
 
 void get_render(){
-	//Assume this will be prepared for rendering by george
-	client_render_struct crs;
-
-	//gets/draws client_render_struct;
-	errx(-1, "get_render not implemented");
+  //gets/draws client_render_struct;
+  //assuming render has got the correct array
+  
+  clear(); 		//clears the screen
+  move(0, 0);		//moves to start
+  int i = 0;
+  while (i > SCREEN_WIDTH * SCREEN_HEIGHT){
+    addch(render.render_data[i]);
+  }
+  //  errx(-1, "get_render not implemented");
 }

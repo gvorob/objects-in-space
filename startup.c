@@ -23,12 +23,25 @@ void setup_connections_lobby(gamestate_struct* gs){
     lobby will be smaller MVP, maybe just 5x5 ship, very simple
     curr_flow_state = FS_CONNECTING
     prepares clients list
+    +-------+
+    |       |
+    |       |
+    |       |
+    |       |
+    |       |
+    +-------+
+    
+
+
   */
   errx(-1, "setup_connections_lobby not implemented");
 }
 
 void update_input_connecting(client_struct* c, gamestate_struct* gs)
 {
+  /*
+    gets input from the users that are already connected
+   */
   errx(-1, "update_input_connecting not implemented");
 }
 
