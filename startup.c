@@ -10,7 +10,7 @@ void init_server(gamestate_struct* gs){
 }
 
 //Starts listening on port, returns socket
-int setup_listening_socket(int port){
+int setup_listening_socket(char* port){
 	/*
 	  (TBD) 
 	  sets up socket for listening
@@ -19,16 +19,14 @@ int setup_listening_socket(int port){
 
         printf("Server starting\n");
 
-	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
+	int sockfd;  // listen on sock_fd
 	struct addrinfo hints, *servinfo, *p;
-	struct sockaddr_storage their_addr; // connector's address information
-	socklen_t sin_size;
-	struct sigaction sa;
+	//struct sockaddr_storage their_addr; // connector's address information
+	//socklen_t sin_size;
+	//struct sigaction sa;
 	int yes=1;
-	char s[INET6_ADDRSTRLEN];
+	//char s[INET6_ADDRSTRLEN];
 	int rv;
-
-	int i;
 
 	//BEGIN PREPARING SOCKETS
 	memset(&hints, 0, sizeof hints);

@@ -50,7 +50,7 @@ void update_input(client_struct* c, gamestate_struct* gs) {
 		case FS_CONNECTING:
 			update_input_connecting(c, gs);
 			break;
-		case default:
+		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
 	}
@@ -62,7 +62,7 @@ void update(gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			update_connecting(gs);
-		case default:
+		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
 	}
@@ -73,7 +73,7 @@ void render(client_struct* c, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			render_connecting(c, gs);
-		case default:
+		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
 	}

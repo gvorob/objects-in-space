@@ -24,11 +24,6 @@ void init_client(char* ip, char* port){
 	client_main_loop(sd);
 }
 
-void *get_in_addr(struct sockaddr *sa) {
-	return sa->sa_family == AF_INET
-		? (void *) &(((struct sockaddr_in*)sa)->sin_addr)
-		: (void *) &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
 
 int connect_to(char* ip, char* port){
   //atomic, once it’s done, go to main loop
