@@ -3,6 +3,7 @@
 
 #include "util.h"
 #include "main_structs.h"
+#include "socket_util.h"
 
 void init_server(gamestate_struct* gs);
 //int setup_listening_socket(???);

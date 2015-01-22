@@ -6,6 +6,10 @@
 #define UP 'w'
 #define DOWN 's'
 #define CONSOLE_LOCK ' '
+
+#include "util.h"
+//for defines
+
 typedef struct _client_input_struct {
   int left;
   int right;
@@ -15,17 +19,18 @@ typedef struct _client_input_struct {
   //more TBD
 } client_input_struct;
 
-//SCREEN WIDTH/HEIGHT TBD
-#define SCREEN_WIDTH 10
-#define SCREEN_HEIGHT 10
 typedef struct _client_render_struct {
   char render_data[SCREEN_WIDTH * SCREEN_HEIGHT];
 } client_render_struct;
 
 #define SCREEN_INDEX(x,y)
 
-typedef struct _client_struct {
-
+typedef struct _client_struct { //DONE
+	client_input_struct prev_input_state;
+	client_input_struct curr_input_state;
+	int socket_d;
+	//If client not connected, socket_d == -1;
+	client_render_struct render;
 } client_struct;
 
 
@@ -34,7 +39,7 @@ typedef struct _player_struct {
 } player_struct;
 
 
-enum tile_type {
+typedef enum _tile_type {
 	TT_FLOOR,
 	TT_WALL,
 	TT_WEAPONS_CONSOLE,
@@ -47,7 +52,7 @@ enum tile_type {
 } tile_type;
 
 typedef struct _tile_struct {
-  enum tile_type type;
+  tile_type type;
   void* console_state_ptr;
 } tile_struct;
 
@@ -75,20 +80,19 @@ typedef struct _shipstate_struct {
   ship_tiles_struct tiles;
 } shipstate_struct;
 
-enum flow_state {
+typedef enum _flow_state {
 	FS_MAIN_GAME,
-	FS_CONNECTING,
+	FS_CONNECTING
 } flow_state;
 
-//MAX PLAYERS TBD
-#define MAX_PLAYERS 3
-typedef struct _gamestate_struct {
-  enum flow_state curr_flow_state;//main game, connecting, dialogue box
-  shipstate_struct shipstate;
-  player_struct players[MAX_PLAYERS];
-  //if players[i].is_connected == 0, not connected
-  client_struct clients[MAX_PLAYERS];
-//if clients[i].socket_d == -1, not connected
+//MAX_PLAYERS defined in util.h
+typedef struct _gamestate_struct { //NOT DONE YET
+	flow_state curr_flow_state;//main game, connecting, dialogue box
+	shipstate_struct shipstate;
+	player_struct players[MAX_PLAYERS];
+	//if players[i].is_connected == 0, not connected
+	client_struct clients[MAX_PLAYERS];
+	//if clients[i].socket_d == -1, not connected
 
 } gamestate_struct;
 
