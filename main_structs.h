@@ -35,7 +35,9 @@ typedef struct _client_struct { //DONE
 
 
 typedef struct _player_struct {
-
+  int x;
+  int y;
+  int is_connected;
 } player_struct;
 
 
