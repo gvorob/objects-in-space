@@ -4,6 +4,16 @@
 #include "util.h"
 #include "main_structs.h"
 
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <termios.h>
+#include <signal.h>
+
 void init_server(gamestate_struct* gs);
 //int setup_listening_socket(???);
 void setup_connections_lobby(gamestate_struct* gs);
