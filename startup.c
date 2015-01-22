@@ -81,6 +81,17 @@ int setup_listening_socket(char* port){
 }
 
 void setup_connections_lobby(gamestate_struct* gs){
+
+	gs.curr_flow_state = FS_CONNECTING;
+	/*
+	  gs.shipstate.tiles //need to initialize and malloc stuff here
+	*/
+	player_struct players[MAX_PLAYERS];
+	
+	int i;
+	//	for (i = 0; i < MAX_PLAYERS; i++){
+		//	players[i] 
+  
   /*
     prepare lobby, prepare clients
     lobby will be smaller MVP, maybe just 5x5 ship, very simple
@@ -94,17 +105,16 @@ void setup_connections_lobby(gamestate_struct* gs){
     |       |
     +-------+
   */
-  
+   
   
   errx(-1, "setup_connections_lobby not implemented");
 }
 
 void update_input_connecting(int client_index, gamestate_struct* gs)
 {
-  
-  
   /*
-    gets input from the users that are already connected
+    gs.players[client_index] contains the coordinates of the player
+    gs.clients[client_index] contains the input from the client
    */
   errx(-1, "update_input_connecting not implemented");
 }
