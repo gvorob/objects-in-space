@@ -26,11 +26,17 @@ void client_main_loop(int socket_d){
 }
 
 void send_input(){
-  //makes/sends client_input_state_struct;
-  errx(-1, "send_input not implemented");
+	//prepare this for george to send
+	client_input_struct cis;
+
+	//makes/sends client_input_state_struct;
+	errx(-1, "send_input not implemented");
 }
 
 void get_render(){
-  //gets/draws client_render_struct;
-  errx(-1, "get_render not implemented");
+	//Assume this will be prepared for rendering by george
+	client_render_struct crs;
+
+	//gets/draws client_render_struct;
+	errx(-1, "get_render not implemented");
 }
