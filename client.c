@@ -35,22 +35,24 @@ void client_main_loop(int socket_d){
 void send_input(){
   //this only does it for the current character being pressed
   //also, ncurses can only do 1 key at a time
-  client_input_struct input;
+  client_input_struct cis;
+
+
   char ch = getch();
   if (ch == UP){
-    input.up = 1;
+    cis.up = 1;
   }
   if (ch == DOWN){
-    input.down = 1;
+    cis.down = 1;
   }
   if (ch == LEFT){
-    input.left = 1;
+    cis.left = 1;
   }
   if (ch == RIGHT){
-    input.right = 1;
+    cis.right = 1;
   }
   if (ch == CONSOLE_LOCK){
-    input.console_lock = 1;
+    cis.console_lock = 1;
   }
 
   //NEEDS TO SEND THE INPUT
@@ -62,12 +64,13 @@ void send_input(){
 void get_render(){
   //gets/draws client_render_struct;
   //assuming render has got the correct array
+  client_render_struct crs;
   
   clear(); 		//clears the screen
   move(0, 0);		//moves to start
   int i = 0;
   while (i > SCREEN_WIDTH * SCREEN_HEIGHT){
-    addch(render.render_data[i]);
+    addch(crs.render_data[i]);
   }
   //  errx(-1, "get_render not implemented");
 }
