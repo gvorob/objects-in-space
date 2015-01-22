@@ -93,15 +93,16 @@ void setup_connections_lobby(gamestate_struct* gs){
     |       |
     |       |
     +-------+
-    
-
-
   */
+  
+  
   errx(-1, "setup_connections_lobby not implemented");
 }
 
-void update_input_connecting(client_struct* c, gamestate_struct* gs)
+void update_input_connecting(int client_index, gamestate_struct* gs)
 {
+  
+  
   /*
     gets input from the users that are already connected
    */
@@ -138,7 +139,8 @@ void update_connecting(gamestate_struct* gs){
 	//END TESTING */
 }
 
-void render_connecting(client_struct* c, gamestate_struct* gs){
+void render_connecting(int client_index, gamestate_struct* gs){
+
 }
 
 void finalize_connections(gamestate_struct* gs){
