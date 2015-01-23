@@ -142,16 +142,18 @@ void update_connecting(gamestate_struct* gs){
 
 	//fcntl(new_fd, F_SETFL, O_NONBLOCK);
 
-	char woop[123];
+	char woop[HANDSHAKE_SIZE];
 	printf("server: got connection\n");
-	read(new_fd, woop, 10);
-	woop[10] = 0;
+	read(new_fd, woop, HANDSHAKE_SIZE);
+	woop[HANDSHAKE_SIZE] = 0;
 	printf("%s\n", woop);
 
 }
 
 void render_connecting(int client_index, gamestate_struct* gs){
+	//YOUR CODE HERE
 
+	
 }
 
 void finalize_connections(gamestate_struct* gs){

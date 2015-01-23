@@ -76,7 +76,11 @@ void print_usage() {
 
 //modifies c->curr_input_state with latest input received from client
 void get_input(client_struct* c) {
-	warnx("get_input not implemented");
+	if(c->socket_d == -1)
+		return;
+
+	if(-1 == recv(c->socket_d, &(c->curr_input_state), sizeof(client_input_struct), 0))
+		warn("Failed to recv in get_input");
 }
 
 //delegates to other files
@@ -106,6 +110,9 @@ void update(gamestate_struct* gs) {
 
 //delegates to other files
 void render(int client_index, gamestate_struct* gs) {
+	if(gs->clients[client_index].socket_d == -1)
+		return;
+
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			render_connecting(client_index, gs);
@@ -114,4 +121,10 @@ void render(int client_index, gamestate_struct* gs) {
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
 	}
+
+	if(-1 == send(gs->clients[client_index].socket_d, 
+			&(gs->clients[client_index].render),
+			sizeof(client_render_struct), 
+			0))
+		warn("failed to send in render");
 }

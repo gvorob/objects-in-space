@@ -12,6 +12,8 @@
 #include <signal.h>
 #include <fcntl.h>
 
+#define HANDSHAKE_SIZE 64
+
 void *get_in_addr(struct sockaddr *sa);
 
 #endif

@@ -16,7 +16,9 @@ void init_client(char* ip, char* port){
 	int sd = connect_to(ip, port);
 	printf("Connected\n");
 
-	send(sd, "Hello World!\n", 13, 0);
+	char temp_msg[HANDSHAKE_SIZE];
+	strncpy(temp_msg, "Hello, I'm trying to connect to you!\n", HANDSHAKE_SIZE);
+	send(sd, temp_msg, sizeof(temp_msg), 0);
 
 
 	printf("Initializing curses\n");
@@ -85,45 +87,46 @@ void setup_ncurses(){
 
 void client_main_loop(int socket_d){
   //calls send_input(), get_render();
-	sleep(1);
-	warnx("temporary sleeping measures");
-	send_input();
-	get_render();
+	while(1) {
+		warnx("temporary sleeping measures");
+		get_render();
+		send_input();
+	}
 }
 
 void send_input(){
-  //this only does it for the current character being pressed
-  //also, ncurses can only do 1 key at a time
-  client_input_struct cis;
+	//this only does it for the current character being pressed
+	//also, ncurses can only do 1 key at a time
+	client_input_struct cis;
 
 
-  char ch = getch();
-  if (ch == UP){
-    cis.up = 1;
-  }
-  if (ch == DOWN){
-    cis.down = 1;
-  }
-  if (ch == LEFT){
-    cis.left = 1;
-  }
-  if (ch == RIGHT){
-    cis.right = 1;
-  }
-  if (ch == CONSOLE_LOCK){
-    cis.console_lock = 1;
-  }
+	char ch = getch();
+	if (ch == UP){
+	  cis.up = 1;
+	}
+	if (ch == DOWN){
+	  cis.down = 1;
+	}
+	if (ch == LEFT){
+	  cis.left = 1;
+	}
+	if (ch == RIGHT){
+	  cis.right = 1;
+	}
+	if (ch == CONSOLE_LOCK){
+	  cis.console_lock = 1;
+	}
 
-  //NEEDS TO SEND THE INPUT
-
-  //makes/sends client_input_state_struct;
-  //errx(-1, "send_input not implemented");
+	
+	send(socket_d, &cis, sizeof(cis), 0);
 }
 
 void get_render(){
   //gets/draws client_render_struct;
   //assuming render has got the correct array
   client_render_struct crs;
+
+  recv(socket_d, &crs, sizeof(crs), 0);
   
   clear(); 		//clears the screen
   move(0, 0);		//moves to start
