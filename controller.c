@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
 	//MAIN LOOP
 	while(1) {
 		int i;
+		printf("starting main loop\n");
 
 		//getinput
 		for(i = 0; i < MAX_PLAYERS; i++) {
@@ -53,10 +54,13 @@ int main(int argc, char *argv[]) {
 
 		//update_input, update, and render
 		for(i = 0; i < MAX_PLAYERS; i++)
-			update_input(&(gs.clients[i]), &gs);
+			update_input(i, &gs);
 		update(&gs);
 		for(i = 0; i < MAX_PLAYERS; i++)
-			render(&(gs.clients[i]), &gs);
+			render(i, &gs);
+
+		warnx("sleeping for 1 second, stopgap measure");
+		sleep(1);
 	}
 }
 
@@ -72,14 +76,14 @@ void print_usage() {
 
 //modifies c->curr_input_state with latest input received from client
 void get_input(client_struct* c) {
-	errx(-1, "get_input not implemented");
+	warnx("get_input not implemented");
 }
 
 //delegates to other files
 void update_input(int client_index, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
-			update_input_connecting(c, gs);
+			update_input_connecting(client_index, gs);
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
@@ -93,6 +97,7 @@ void update(gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			update_connecting(gs);
+			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
@@ -103,7 +108,8 @@ void update(gamestate_struct* gs) {
 void render(int client_index, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
-			render_connecting(c, gs);
+			render_connecting(client_index, gs);
+			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;

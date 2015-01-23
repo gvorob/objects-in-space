@@ -12,16 +12,15 @@ void init_client(char* ip, char* port){
 	  never returns
 	*/
 
-	
 	printf("Starting client, connecting to %s on port %s\n", ip, port);
 	int sd = connect_to(ip, port);
 	printf("Connected\n");
 
 	send(sd, "Hello World!\n", 13, 0);
 
+
 	printf("Initializing curses\n");
-	//DO THIS
-		warnx("CURSES NOT YET IMPLEMENTED");
+	setup_ncurses();
 	printf("Done, going to main loop\n");
 	
 	client_main_loop(sd);

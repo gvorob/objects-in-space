@@ -1,12 +1,19 @@
 #include "startup.h"
 
+int listening_sd;
+
 void init_server(gamestate_struct* gs){
-  /*maybe init curses shenanigans
-    setup_listening_socket(???)
-    setup_connections_lobby(&gs)
-    return into main loop
-  */
-  errx(-1, "init_server not implemented");
+	/*
+	  setup_listening_socket(???)
+	  setup_connections_lobby(&gs)
+	  return into main loop
+	*/
+
+	listening_sd = setup_listening_socket(DEFAULT_PORT);
+
+	printf("Preparing gamestate_struct\n");
+	setup_connections_lobby(gs);
+	return;
 }
 
 //Starts listening on port, returns socket
@@ -15,8 +22,6 @@ int setup_listening_socket(char* port){
 	  (TBD) 
 	  sets up socket for listening
 	*/
-	errx(-1, "setup_listening_socket not implemented");
-
         printf("Server starting\n");
 
 	int sockfd;  // listen on sock_fd
@@ -82,7 +87,7 @@ int setup_listening_socket(char* port){
 
 void setup_connections_lobby(gamestate_struct* gs){
 
-	gs.curr_flow_state = FS_CONNECTING;
+	gs->curr_flow_state = FS_CONNECTING;
 	/*
 	  gs.shipstate.tiles //need to initialize and malloc stuff here
 	*/
@@ -107,16 +112,16 @@ void setup_connections_lobby(gamestate_struct* gs){
   */
    
   
-  errx(-1, "setup_connections_lobby not implemented");
+	warnx("setup_connections_lobby, not yet fully implemented");
 }
 
 void update_input_connecting(int client_index, gamestate_struct* gs)
 {
-  /*
-    gs.players[client_index] contains the coordinates of the player
-    gs.clients[client_index] contains the input from the client
-   */
-  errx(-1, "update_input_connecting not implemented");
+	/*
+	  gs.players[client_index] contains the coordinates of the player
+	  gs.clients[client_index] contains the input from the client
+	 */
+	warnx("update_input_connecting not implemented");
 }
 
 void update_connecting(gamestate_struct* gs){
@@ -127,26 +132,22 @@ void update_connecting(gamestate_struct* gs){
 	    next loop around should then start playing properly
 	*/
 
-	/*TESTING CODE, NOT FINISHED YET
-	sin_size = sizeof their_addr;
-	new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
+	int new_fd = accept(listening_sd, NULL, 0);
 	if (new_fd == -1) {
 		if(errno == EAGAIN || errno == EWOULDBLOCK)//if no connections
-			continue;
-		perror("accept");
-		continue;
+			return;
+		warn("Failed to accept in update_connecting");
+		return;
 	}
 
-	fcntl(new_fd, F_SETFL, O_NONBLOCK);
+	//fcntl(new_fd, F_SETFL, O_NONBLOCK);
 
-	inet_ntop(their_addr.ss_family,
-		get_in_addr((struct sockaddr *)&their_addr),
-		s, sizeof s);
-	printf("server: got connection from %s\n", s);
+	char woop[123];
+	printf("server: got connection\n");
+	read(new_fd, woop, 10);
+	woop[10] = 0;
+	printf("%s\n", woop);
 
-	sockets[num_socks] = new_fd;
-	num_socks++;
-	//END TESTING */
 }
 
 void render_connecting(int client_index, gamestate_struct* gs){

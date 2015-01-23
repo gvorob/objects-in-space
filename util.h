@@ -3,6 +3,7 @@
 
 #include <err.h>
 #include <stdio.h>
+#include <errno.h>
 
 #define DEFAULT_PORT "9998"
 #define LOCALHOST "127.0.0.1"
