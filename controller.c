@@ -1,10 +1,34 @@
 #include "controller.h"
 
 int main(int argc, char *argv[]) {
+	int is_client;
+	char* ip_string;
 	gamestate_struct gs;
 	
-	int is_client = 1; //TEMP
-	warnx("Starting as client/server is hardcoded for now");
+
+	if(argc != 3 && argc != 2)
+		print_usage();
+
+	if(!strcmp(argv[1], "--client")) {
+		is_client = 1;
+
+		if(argc == 3 && !strncmp(argv[2], "-ip", 3))
+			ip_string = argv[2] + 3;
+		else
+			print_usage();
+
+		printf("Starting as client, ip=%s\n", ip_string);
+	} else if(!strcmp(argv[1], "--server")) {
+		is_client = 0;
+
+		if(argc != 2)
+			print_usage();
+
+		printf("Starting as server\n");
+	} else {
+		print_usage();
+	}
+
 
 	if(is_client) {
 		//Client main loop in here
@@ -34,6 +58,13 @@ int main(int argc, char *argv[]) {
 		for(i = 0; i < MAX_PLAYERS; i++)
 			render(&(gs.clients[i]), &gs);
 	}
+}
+
+void print_usage() {
+	printf("Usage: ./space --client -ipxxx.xxx.xxx.xxx\n");
+	printf("       ./space --server\n");
+
+	exit(-1);
 }
 
 

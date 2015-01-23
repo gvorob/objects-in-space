@@ -8,6 +8,7 @@
 #include "util.h"
 
 int main(int argc, char *argv[]);
+void print_usage();
 void get_input(client_struct* c);
 void update_input(client_struct* c, gamestate_struct* gs);
 void update(gamestate_struct* gs);

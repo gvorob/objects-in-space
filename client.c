@@ -1,6 +1,7 @@
 #include "client.h"
 
 client_render_struct render;
+int socket_d;
 
 
 void init_client(char* ip, char* port){
@@ -85,7 +86,10 @@ void setup_ncurses(){
 
 void client_main_loop(int socket_d){
   //calls send_input(), get_render();
-  errx(-1, "client_main_loop not implemented");
+	sleep(1);
+	warnx("temporary sleeping measures");
+	send_input();
+	get_render();
 }
 
 void send_input(){
