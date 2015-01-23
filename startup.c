@@ -88,15 +88,18 @@ int setup_listening_socket(char* port){
 void setup_connections_lobby(gamestate_struct* gs){
 
 	gs->curr_flow_state = FS_CONNECTING;
-	/*
-	  gs.shipstate.tiles //need to initialize and malloc stuff here
-	*/
-	player_struct players[MAX_PLAYERS];
 	
+	gs->shipstate.tiles.width = LOBBY_WIDTH;
+	gs->shipstate.tiles.height = LOBBY_HEIGHT;
+
+	gs->shipstate.tiles.tiles_ptr = (tile_struct *) malloc (sizeof(tile_struct *)* (LOBBY_WIDTH)*(LOBBY_HEIGHT));
+	
+	//players = (player_struct)malloc(sizeof(player_struct) * MAX_PLAYERS);
 	int i;
-	//	for (i = 0; i < MAX_PLAYERS; i++){
-		//	players[i] 
-  
+	for (i = 0; i < MAX_PLAYERS; i++){
+		gs->clients[i].socket_d = -1;//setting stuff to its standard value
+		gs->players[i].is_connected = 0;
+	}
   /*
     prepare lobby, prepare clients
     lobby will be smaller MVP, maybe just 5x5 ship, very simple
@@ -110,7 +113,6 @@ void setup_connections_lobby(gamestate_struct* gs){
     |       |
     +-------+
   */
-   
   
 	warnx("setup_connections_lobby, not yet fully implemented");
 }

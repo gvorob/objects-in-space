@@ -28,7 +28,7 @@ typedef struct _client_render_struct {
 typedef struct _client_struct { //DONE
 	client_input_struct prev_input_state;
 	client_input_struct curr_input_state;
-	int socket_d;
+	int socket_d; 
 	//If client not connected, socket_d == -1;
 	client_render_struct render;
 } client_struct;
@@ -67,6 +67,8 @@ typedef struct _ship_tiles_struct {
 
 //MAX CONSOLES TBD
 #define MAX_CONSOLES 2
+#define LOBBY_WIDTH 30
+#define LOBBY_HEIGHT 30
 typedef struct _shipstate_struct {
   //all console states
   //e.g.:
