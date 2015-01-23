@@ -76,7 +76,7 @@ void get_input(client_struct* c) {
 }
 
 //delegates to other files
-void update_input(client_struct* c, gamestate_struct* gs) {
+void update_input(int client_index, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			update_input_connecting(c, gs);
@@ -100,7 +100,7 @@ void update(gamestate_struct* gs) {
 }
 
 //delegates to other files
-void render(client_struct* c, gamestate_struct* gs) {
+void render(int client_index, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			render_connecting(c, gs);
