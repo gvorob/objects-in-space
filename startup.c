@@ -164,16 +164,17 @@ void update_connecting(gamestate_struct* gs){
 }
 
 void render_connecting(int client_index, gamestate_struct* gs){
-	char* rp;
-	static int temp = 0;
-	temp++;
-	char buff[25];
+	char* rp; //render pointer
 
 	rp = (gs->clients[client_index].render.render_data);
 
+	//JUST TO DEMONSTRATE THAT IT WORKS
+	static int temp = 0;
+	temp++;
+	char buff[25];
 	sprintf(buff, "%d", temp);
 	strcpy(rp, buff);
-	//YOUR CODE HERE
+	//REPLACE THE ABOVE WITH PROPER RENDER CODE
 
 	
 }

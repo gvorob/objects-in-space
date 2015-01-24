@@ -25,3 +25,8 @@ Files
 * socket_util.c/.h
 * startup.c/.h
 * util.h
+
+How to Run
+----------
+./space --server
+./space --client -ip127.0.0.1

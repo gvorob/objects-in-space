@@ -117,14 +117,10 @@ void send_input(){
 	}
 
 	
-	if(-1 == send(socket_d, &cis, sizeof(cis), 0)) {
-		if(errno == EAGAIN || errno == EWOULDBLOCK)
-			warnx("nothing to recv");
-		else
-			warn("failed to recv");
-	} else {
+	if(-1 == send(socket_d, &cis, sizeof(cis), 0))
+		warn("failed to recv");
 
-	}
+	//sent
 }
 
 void get_render(){
@@ -132,25 +128,14 @@ void get_render(){
 	//assuming render has got the correct array
 	client_render_struct crs;
 
-	warnx("trying to recv");
+	//warnx("trying to recv");
 	if(-1 == recv(socket_d, &crs, sizeof(crs), 0)) {
-		warnx("frecvd");
-		clear(); 		//clears the screen
-		move(0, 0);		//moves to start
-		if(errno == EAGAIN || errno == EWOULDBLOCK)
-			warnx("nothing to recv");
-		else
-			warn("failed to recv");
-		refresh();
+		//warnx("frecvd");
+		warn("failed to recv");
 	} else {
 
 		int i;
-		for(i = 0; i < sizeof(crs); i++) {
-			if(!(i % SCREEN_WIDTH))
-				fprintf(stderr,"\n");
-			fprintf(stderr,"%c", ((char *)&crs)[i]);
-		}
-		warnx("recvd");
+		//warnx("recvd");
 		clear(); 		//clears the screen
 		move(0, 0);		//moves to start
 		i = 0;
@@ -158,8 +143,6 @@ void get_render(){
 			addnstr(crs.render_data + i * SCREEN_WIDTH, SCREEN_WIDTH);
 			i++;
 		}
-
-		warnx("!!!%.10s!!!", crs.render_data);
 
 		refresh();
 	}
