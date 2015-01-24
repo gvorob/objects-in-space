@@ -94,8 +94,11 @@ void setup_connections_lobby(gamestate_struct* gs){
 	player_struct players[MAX_PLAYERS];
 	
 	int i;
-	//	for (i = 0; i < MAX_PLAYERS; i++){
-		//	players[i] 
+
+	for (i = 0; i < MAX_PLAYERS; i++){
+		gs->clients[i].socket_d = -1;
+		gs->players[i].is_connected = 0;
+	}
   
   /*
     prepare lobby, prepare clients
@@ -112,7 +115,6 @@ void setup_connections_lobby(gamestate_struct* gs){
   */
    
   
-	warnx("setup_connections_lobby, not yet fully implemented");
 }
 
 void update_input_connecting(int client_index, gamestate_struct* gs)
@@ -121,7 +123,6 @@ void update_input_connecting(int client_index, gamestate_struct* gs)
 	  gs.players[client_index] contains the coordinates of the player
 	  gs.clients[client_index] contains the input from the client
 	 */
-	warnx("update_input_connecting not implemented");
 }
 
 void update_connecting(gamestate_struct* gs){
@@ -132,7 +133,10 @@ void update_connecting(gamestate_struct* gs){
 	    next loop around should then start playing properly
 	*/
 
-	int new_fd = accept(listening_sd, NULL, 0);
+	int i;
+	int new_fd;
+
+	new_fd = accept(listening_sd, NULL, 0);
 	if (new_fd == -1) {
 		if(errno == EAGAIN || errno == EWOULDBLOCK)//if no connections
 			return;
@@ -148,9 +152,28 @@ void update_connecting(gamestate_struct* gs){
 	woop[HANDSHAKE_SIZE] = 0;
 	printf("%s\n", woop);
 
+	for(i = 0; i < MAX_PLAYERS; i++) {
+		if(gs->clients[i].socket_d == -1) {
+			memset(&(gs->clients[i]), 0, sizeof(client_struct));
+			memset(&(gs->players[i]), 0, sizeof(player_struct));
+			gs->clients[i].socket_d = new_fd;
+			gs->players[i].is_connected = 1;
+			return;
+		}
+	}
+
 }
 
 void render_connecting(int client_index, gamestate_struct* gs){
+	char* rp;
+	static int temp = 0;
+	temp++;
+	char buff[25];
+
+	rp = (gs->clients[client_index].render.render_data);
+
+	sprintf(buff, "%d", temp);
+	strcpy(rp, buff);
 	//YOUR CODE HERE
 
 	

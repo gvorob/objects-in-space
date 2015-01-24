@@ -48,16 +48,19 @@ int main(int argc, char *argv[]) {
 
 		//getinput
 		for(i = 0; i < MAX_PLAYERS; i++) {
-			if(gs.clients[i].socket_d != -1)
+				//checks if client is connected in function
 				get_input(&(gs.clients[i]));
 		}
 
 		//update_input, update, and render
 		for(i = 0; i < MAX_PLAYERS; i++)
-			update_input(i, &gs);
+				//checks if client is connected in function
+				update_input(i, &gs);
 		update(&gs);
-		for(i = 0; i < MAX_PLAYERS; i++)
-			render(i, &gs);
+		for(i = 0; i < MAX_PLAYERS; i++) {
+				//checks if client is connected in function
+				render(i, &gs);
+		}
 
 		warnx("sleeping for 1 second, stopgap measure");
 		sleep(1);
@@ -85,6 +88,9 @@ void get_input(client_struct* c) {
 
 //delegates to other files
 void update_input(int client_index, gamestate_struct* gs) {
+	if(gs->clients[client_index].socket_d == -1)
+		return;
+
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			update_input_connecting(client_index, gs);
@@ -127,4 +133,6 @@ void render(int client_index, gamestate_struct* gs) {
 			sizeof(client_render_struct), 
 			0))
 		warn("failed to send in render");
+	printf("sent render\n");
 }
+
