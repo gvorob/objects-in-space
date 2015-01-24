@@ -13,19 +13,19 @@ void init_client(char* ip, char* port){
 	*/
 
 	printf("Starting client, connecting to %s on port %s\n", ip, port);
-	int sd = connect_to(ip, port);
-	printf("Connected\n");
+	socket_d = connect_to(ip, port);
+	printf("Connected at sd %d\n", socket_d);
 
 	char temp_msg[HANDSHAKE_SIZE];
 	strncpy(temp_msg, "Hello, I'm trying to connect to you!\n", HANDSHAKE_SIZE);
-	send(sd, temp_msg, sizeof(temp_msg), 0);
+	send(socket_d, temp_msg, sizeof(temp_msg), 0);
 
 
 	printf("Initializing curses\n");
 	setup_ncurses();
 	printf("Done, going to main loop\n");
 	
-	client_main_loop(sd);
+	client_main_loop(socket_d);
 }
 
 
@@ -88,7 +88,6 @@ void setup_ncurses(){
 void client_main_loop(int socket_d){
   //calls send_input(), get_render();
 	while(1) {
-		warnx("temporary sleeping measures");
 		get_render();
 		send_input();
 	}
@@ -118,23 +117,53 @@ void send_input(){
 	}
 
 	
-	send(socket_d, &cis, sizeof(cis), 0);
+	if(-1 == send(socket_d, &cis, sizeof(cis), 0)) {
+		if(errno == EAGAIN || errno == EWOULDBLOCK)
+			warnx("nothing to recv");
+		else
+			warn("failed to recv");
+	} else {
+
+	}
 }
 
 void get_render(){
-  //gets/draws client_render_struct;
-  //assuming render has got the correct array
-  client_render_struct crs;
+	//gets/draws client_render_struct;
+	//assuming render has got the correct array
+	client_render_struct crs;
 
-  recv(socket_d, &crs, sizeof(crs), 0);
-  
-  clear(); 		//clears the screen
-  move(0, 0);		//moves to start
-  int i = 0;
-  while (i > SCREEN_WIDTH * SCREEN_HEIGHT){
-    addch(crs.render_data[i]);
-  }
-  //  errx(-1, "get_render not implemented");
+	warnx("trying to recv");
+	if(-1 == recv(socket_d, &crs, sizeof(crs), 0)) {
+		warnx("frecvd");
+		clear(); 		//clears the screen
+		move(0, 0);		//moves to start
+		if(errno == EAGAIN || errno == EWOULDBLOCK)
+			warnx("nothing to recv");
+		else
+			warn("failed to recv");
+		refresh();
+	} else {
+
+		int i;
+		for(i = 0; i < sizeof(crs); i++) {
+			if(!(i % SCREEN_WIDTH))
+				fprintf(stderr,"\n");
+			fprintf(stderr,"%c", ((char *)&crs)[i]);
+		}
+		warnx("recvd");
+		clear(); 		//clears the screen
+		move(0, 0);		//moves to start
+		i = 0;
+		while (i < SCREEN_HEIGHT){
+			addnstr(crs.render_data + i * SCREEN_WIDTH, SCREEN_WIDTH);
+			i++;
+		}
+
+		warnx("!!!%.10s!!!", crs.render_data);
+
+		refresh();
+	}
+		//  errx(-1, "get_render not implemented");
 }
 
 
