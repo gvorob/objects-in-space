@@ -136,23 +136,28 @@ void setup_game(gamestate_struct* gs){
 			switch(temp_buff[tile_index]) {
 				case ' ':
 				case '-':
-					temp_ts.type = TT_FLOOR;
+					temp_ts.type = TT_SPACE;
 					break;
 				case '#':
 					temp_ts.type = TT_WALL;
 					break;
 				case 'X':
-					temp_ts.type = TT_WALL;//TEMP
+					temp_ts.type = TT_ALT_WALL;
 					break;
 				case '.':
 					temp_ts.type = TT_FLOOR;
 					break;
 				case 'S':
+					temp_ts.type = TT_SENSORS_CONSOLE;
+					break;
 				case 'E':
+					temp_ts.type = TT_ENGINES_CONSOLE;
+					break;
 				case 'W':
+					temp_ts.type = TT_WEAPONS_CONSOLE;
+					break;
 				case 'F':
-					temp_ts.type = TT_FLOOR;//TEMP
-					warnx("consoles not implemented yet");
+					temp_ts.type = TT_FTL_CONSOLE;
 					break;
 				case '@':
 					temp_ts.type = TT_FLOOR;

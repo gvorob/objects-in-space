@@ -68,10 +68,10 @@ typedef struct _ship_tiles_struct {
 #define SHIP_TILES_INDEX(x, y, stsp) ((x) + (y) * (stsp)->width)
 
 typedef enum _console_index {
-	CI_WEAPONS;
-	CI_SENSORS;
-	CI_ENGINES;
-	CI_FTL;
+	CI_WEAPONS,
+	CI_SENSORS,
+	CI_ENGINES,
+	CI_FTL,
 } console_index;
 
 typedef struct _shipstate_struct {

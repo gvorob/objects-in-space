@@ -2,7 +2,7 @@
 
 //WEAPONS =================
 void init_weapons_console(
-		gamestate_struct*) {
+		gamestate_struct* gs) {
 	errx(-1, "init_weapons_console not yet implemented");
 };
 
@@ -32,7 +32,7 @@ void update_weapons_console(
 
 //SENSORS =================
 void init_sensors_console(
-		gamestate_struct*) {
+		gamestate_struct* gs) {
 	errx(-1, "init_sensors_console not yet implemented");
 };
 
@@ -62,7 +62,7 @@ void update_sensors_console(
 
 //ENGINES =================
 void init_engines_console(
-		gamestate_struct*) {
+		gamestate_struct* gs) {
 	errx(-1, "init_engines_console not yet implemented");
 };
 
@@ -92,7 +92,7 @@ void update_engines_console(
 
 //REPAIRS =================
 void init_repairs_console(
-		gamestate_struct*) {
+		gamestate_struct* gs) {
 	errx(-1, "init_repairs_console not yet implemented");
 };
 
@@ -122,7 +122,7 @@ void update_repairs_console(
 
 //FTL =================
 void init_ftl_console(
-		gamestate_struct*) {
+		gamestate_struct* gs) {
 	errx(-1, "init_ftl_console not yet implemented");
 };
 
