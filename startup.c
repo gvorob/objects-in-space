@@ -126,6 +126,7 @@ void setup_connections_lobby(gamestate_struct* gs){
 	for (i = 0; i < MAX_PLAYERS; i++){
 		gs->clients[i].socket_d = -1;//setting stuff to its standard value
 		gs->players[i].is_connected = 0;
+		gs->players[i].is_at_console = 0;
 	}
 
 }

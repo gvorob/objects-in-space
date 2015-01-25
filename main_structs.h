@@ -1,5 +1,6 @@
 #ifndef MAIN_STRUCTS_H
 #define MAIN_STRUCTS_H
+#error included main_structs.h
 
 #define LEFT 'a'
 #define RIGHT 'd'
@@ -35,9 +36,10 @@ typedef struct _client_struct { //DONE
 
 
 typedef struct _player_struct {
-  int x;
-  int y;
-  int is_connected;
+	int x;
+	int y;
+	int is_at_console;
+	int is_connected;
 } player_struct;
 
 
@@ -105,5 +107,8 @@ typedef struct _gamestate_struct { //NOT DONE YET
 
 } gamestate_struct;
 
+//tile checks
+int is_console(tile_type t);
+int is_walkable(tile_type t);
 
 #endif

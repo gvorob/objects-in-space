@@ -3,27 +3,54 @@
 void update_input_main_game(int client_index, gamestate_struct* gs) {
 	client_input_struct* cisp;
 	player_struct* psp;
+	ship_tiles_struct* stsp;
 
 	warnx("updating input for player %d", client_index);
 	
 	cisp = &(gs->clients[client_index].curr_input_state);
 	psp = &(gs->players[client_index]);
+	stsp = &(gs->shipstate.tiles);
 
-	if(cisp->up) {
-		psp->y--;
-	}
-	if(cisp->down) {
-		psp->y++;
-	}
-	if(cisp->left) {
-		psp->x--;
-	}
-	if(cisp->right) {
-		psp->x++;
+	if(cisp->console_lock) {
+		//If standing on a console
+		tile_struct temp_tile;
+		temp_tile = stsp->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, stsp)];
+		if(is_console(temp_tile.type)) {
+			psp->is_at_console = !psp->is_at_console;
+		}
 	}
 
-	psp->x = clamp(psp->x, 0, LOBBY_WIDTH - 1); 
-	psp->y = clamp(psp->y, 0, LOBBY_HEIGHT - 1); 
+	//Walk around
+	if(!psp->is_at_console) {
+		int tempx, tempy;
+		tile_struct temp_tile;
+
+		tempx = psp->x;
+		tempy = psp->y;
+
+		if(cisp->up) {
+			tempy--;
+		}
+		if(cisp->down) {
+			tempy++;
+		}
+		if(cisp->left) {
+			tempx--;
+		}
+		if(cisp->right) {
+			tempx++;
+		}
+
+		tempx = clamp(tempx, 0, LOBBY_WIDTH - 1); 
+		tempy = clamp(tempy, 0, LOBBY_HEIGHT - 1); 
+
+		temp_tile = stsp->tiles_ptr[SHIP_TILES_INDEX(tempx, tempy, stsp)];
+
+		if(is_walkable(temp_tile.type)) {
+			psp->x = tempx;
+			psp->y = tempy;
+		}
+	}
 }
 
 void update_main_game(gamestate_struct* gs) {
@@ -102,6 +129,14 @@ void setup_game(gamestate_struct* gs){
 	free(stsp->tiles_ptr);
 	stsp->tiles_ptr = NULL;
 
+	//prepare consoles
+	for(i = 0; i < MAX_CONSOLES; i++)
+		gs->shipstate.console_states[i] = NULL;
+	init_weapons_console(gs);
+	init_engines_console(gs);
+	init_sensors_console(gs);
+	init_ftl_console(gs);
+
 	//start reading in ship layout
 	FILE* file = fopen(SHIP_FILE, "r");
 	if(file == NULL)
@@ -149,15 +184,19 @@ void setup_game(gamestate_struct* gs){
 					break;
 				case 'S':
 					temp_ts.type = TT_SENSORS_CONSOLE;
+					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_SENSORS;
 					break;
 				case 'E':
 					temp_ts.type = TT_ENGINES_CONSOLE;
+					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_ENGINES;
 					break;
 				case 'W':
 					temp_ts.type = TT_WEAPONS_CONSOLE;
+					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_WEAPONS;
 					break;
 				case 'F':
 					temp_ts.type = TT_FTL_CONSOLE;
+					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_FTL;
 					break;
 				case '@':
 					temp_ts.type = TT_FLOOR;
