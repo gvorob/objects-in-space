@@ -1,6 +1,5 @@
 #ifndef MAIN_STRUCTS_H
 #define MAIN_STRUCTS_H
-#error included main_structs.h
 
 #define LEFT 'a'
 #define RIGHT 'd'

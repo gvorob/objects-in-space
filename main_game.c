@@ -16,7 +16,7 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 		tile_struct temp_tile;
 		temp_tile = stsp->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, stsp)];
 		if(is_console(temp_tile.type)) {
-			psp->is_at_console = !psp->is_at_console;
+			psp->is_at_console = !(psp->is_at_console);
 		}
 	}
 
@@ -110,6 +110,10 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 			total_players++;
 		}
 	}
+
+	//DEBUGGING
+	ps = gs->players[client_index];
+	sprintf(rp + SCREEN_INDEX(0, stsp->height), "is_at_console:%d", ps.is_at_console);
 
 }
 

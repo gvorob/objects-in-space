@@ -97,6 +97,7 @@ void send_input(){
 	//this only does it for the current character being pressed
 	//also, ncurses can only do 1 key at a time
 	client_input_struct cis;
+	memset(&cis, 0, sizeof(cis));
 
 
 	char ch;
