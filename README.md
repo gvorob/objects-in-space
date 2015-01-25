@@ -26,6 +26,11 @@ Files
 * startup.c/.h
 * util.h
 
+Design Docs
+-----------
+ * [Code Design](https://docs.google.com/document/d/1IgatDz_6722brVV7fFIwvBEq5ark7zgIoqw6d45vSGQ/edit?usp=sharing)
+ * [Planning](https://docs.google.com/document/d/19gbqSTsz3DaU1Bog9vDDGnbJoEudQRNv5XVAje69cCo/edit?usp=sharing)
+
 How to Run
 ----------
 ./space --server
