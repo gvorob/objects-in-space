@@ -109,7 +109,7 @@ typedef struct _encounter_struct {
   	int enemy_location_x;
   	int enemy_location_y;
   	int enemy_max_health;
-  	int health;
+  	int enemy_health;
 } encounter_struct;
 
 #endif
