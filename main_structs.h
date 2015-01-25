@@ -102,8 +102,14 @@ typedef struct _gamestate_struct { //NOT DONE YET
 	//if players[i].is_connected == 0, not connected
 	client_struct clients[MAX_PLAYERS];
 	//if clients[i].socket_d == -1, not connected
-
+  	encounter_struct encounter;
 } gamestate_struct;
 
+typedef struct _encounter_struct {
+  	int enemy_location_x;
+  	int enemy_location_y;
+  	int enemy_max_health;
+  	int health;
+} encounter_struct;
 
 #endif

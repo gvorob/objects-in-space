@@ -28,8 +28,6 @@ void update_weapons_console(
 }
 //==========================
 
-
-
 //SENSORS =================
 void init_sensors_console(
 		gamestate_struct* gs) {
