@@ -19,7 +19,7 @@
 
 
 //SCREEN WIDTH/HEIGHT TBD
-#define SCREEN_WIDTH 50
+#define SCREEN_WIDTH 80
 #define SCREEN_HEIGHT 50
 
 #define SHIP_FILE "ship_layout.txt"

@@ -24,6 +24,8 @@ typedef struct _ftl_console_state_struct {
 
 }  ftl_console_state_struct;
 
+void init_weapons_console(
+	gamestate_struct*);
 void render_weapons_console(
 	int client_index, 
 	weapons_console_state_struct* wcss,
@@ -38,6 +40,8 @@ void update_weapons_console(
 	gamestate_struct* gs);
 
 
+void init_sensors_console(
+	gamestate_struct*);
 void render_sensors_console(
 	int client_index, 
 	sensors_console_state_struct* wcss,
@@ -52,6 +56,8 @@ void update_sensors_console(
 	gamestate_struct* gs);
 
 
+void init_engines_console(
+	gamestate_struct*);
 void render_engines_console(
 	int client_index, 
 	engines_console_state_struct* wcss,
@@ -66,6 +72,8 @@ void update_engines_console(
 	gamestate_struct* gs);
 
 
+void init_repairs_console(
+	gamestate_struct*);
 void render_repairs_console(
 	int client_index, 
 	repairs_console_state_struct* wcss,
@@ -80,6 +88,8 @@ void update_repairs_console(
 	gamestate_struct* gs);
 
 
+void init_ftl_console(
+	gamestate_struct*);
 void render_ftl_console(
 	int client_index, 
 	ftl_console_state_struct* wcss,
