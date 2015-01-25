@@ -42,8 +42,10 @@ typedef struct _player_struct {
 
 
 typedef enum _tile_type {
+	TT_SPACE,
 	TT_FLOOR,
 	TT_WALL,
+	TT_ALT_WALL,
 	TT_WEAPONS_CONSOLE,
 	TT_SENSORS_CONSOLE,
 	TT_ENGINES_CONSOLE,
@@ -65,10 +67,6 @@ typedef struct _ship_tiles_struct {
 } ship_tiles_struct;
 #define SHIP_TILES_INDEX(x, y, stsp) ((x) + (y) * (stsp)->width)
 
-//MAX CONSOLES TBD
-#define MAX_CONSOLES 2
-#define LOBBY_WIDTH 30
-#define LOBBY_HEIGHT 30
 typedef struct _shipstate_struct {
   //all console states
   //e.g.:

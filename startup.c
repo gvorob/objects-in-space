@@ -163,19 +163,17 @@ void update_input_connecting(int client_index, gamestate_struct* gs) {
 	psp->y = clamp(psp->y, 0, LOBBY_HEIGHT - 1); 
 }
 
+/*  
+	let currently connected players move around
+	try to accept more
+	if all connections are done, call finalize_connections(...) and setup_game(...)
+	next loop around should then start playing properly
+*/
 void update_connecting(gamestate_struct* gs){
 	int i;
-	/*  
-	    let currently connected players move around
-	    try to accept more
-	    if all connections are done, call finalize_connections(...) and setup_game(...)
-	    next loop around should then start playing properly
-	*/
-
-
+	int new_fd;
 
 	//HANDLE NEW CONNECTIONS
-	int new_fd;
 
 	new_fd = accept(listening_sd, NULL, 0);
 	if (new_fd == -1) {
@@ -187,11 +185,11 @@ void update_connecting(gamestate_struct* gs){
 
 	//ONLY GETS HERE IF SOMEONE CONNECTED
 
-	char woop[HANDSHAKE_SIZE];
+	char handshake[HANDSHAKE_SIZE];
 	printf("server: got connection\n");
-	read(new_fd, woop, HANDSHAKE_SIZE);
-	woop[HANDSHAKE_SIZE] = 0;
-	printf("%s\n", woop);
+	read(new_fd, handshake, HANDSHAKE_SIZE);
+	handshake[HANDSHAKE_SIZE] = 0;
+	printf("%s\n", handshake);
 
 	//SET CLIENT/SOCKET/PLAYER INFO IN GS
 	for(i = 0; i < MAX_PLAYERS; i++) {
@@ -214,13 +212,16 @@ void update_connecting(gamestate_struct* gs){
 		close(new_fd);
 	}
 
+	//Count how many players have connected
 	int total_players = 0;
 	for(i = 0; i < MAX_PLAYERS; i++)
 		if(gs->players[i].is_connected)
 			total_players++;
 
-	if(total_players == 2) {
-		setup_game(gs);
+	//All players connected, go to main game
+	if(total_players == PLAYERS_TO_START) {
+		finalize_connections(gs);
+		setup_game(gs); //in main_game.c
 	}
 }
 
@@ -229,17 +230,10 @@ void render_connecting(int client_index, gamestate_struct* gs){
 	ship_tiles_struct* stsp;
 	player_struct ps;
 	int i, j;
+	int total_players = 0;
 
 	rp = (gs->clients[client_index].render.render_data);
 	stsp = &(gs->shipstate.tiles);
-
-	//JUST TO DEMONSTRATE THAT IT WORKS
-	static int temp = 0;
-	temp++;
-	char buff[25];
-	sprintf(buff, "%d", temp);
-	strcpy(rp, buff);
-	//REPLACE THE ABOVE WITH PROPER RENDER CODE
 
 
 	for(i = 0; i < LOBBY_WIDTH; i++) {
@@ -261,95 +255,20 @@ void render_connecting(int client_index, gamestate_struct* gs){
 		ps = gs->players[i];
 		if(ps.is_connected) {
 			rp[SCREEN_INDEX(ps.x, ps.y)] = '@';
+			total_players++;
 		}
 	}
+
+	sprintf(
+			rp + SCREEN_INDEX(LOBBY_WIDTH, 0), 
+			"%d/%d players connected", 
+			total_players, 
+			PLAYERS_TO_START);
 }
 
+/*
+	close sockets etc etc
+*/
 void finalize_connections(gamestate_struct* gs){
-  /*
-    close sockets etc etc
-  */
-}
-
-  /*
-	prepare gamestate, shipstate, load in ships, encounter, etc
-	note: gamestate should be partly preloaded from setup_connections_lobby 
-  */
-void setup_game(gamestate_struct* gs){
-	int width, height;
-	int i, j, k;
-	ship_tiles_struct* stsp;
-	char* temp_buff;
-
-	stsp = &(gs->shipstate.tiles);
-
-	//free existing tile array
-	free(stsp->tiles_ptr);
-	stsp->tiles_ptr = NULL;
-
-	//start reading in ship layout
-	FILE* file = fopen(SHIP_FILE, "r");
-	if(file == NULL)
-		err(-1, "Failed to open ship file \"%s\"", SHIP_FILE);
-
-	//Prepare new tile_struct matrix
-	fscanf(file, "%d %d\n", &width, &height);
-	printf("%d %d\n", width, height);
-	stsp->width = width;
-	stsp->height = height;
-	stsp->tiles_ptr = (tile_struct*) malloc(sizeof(tile_struct) * width * height);
-
-	//read in tile data from file
-	temp_buff = (char*) malloc(width * height);
-	for(i = 0; i < height; i++) {
-		if(-1 == fread(temp_buff + width * i, sizeof(char), width, file))
-			err(-1, "Failed to fread in setup_game");
-		if(fgetc(file) != '\n')
-			errx(-1, "Trouble reading in setup_game");
-	}
-	fclose(file);
-
-	//translate into tiles
-	for(i = 0; i < width; i++) {
-		for(j = 0; j < height; j++) {
-			tile_struct temp_ts;
-			int tile_index;
-
-			tile_index = SHIP_TILES_INDEX(i, j, stsp);
-
-			temp_ts.console_state_ptr = NULL;
-			switch(temp_buff[tile_index]) {
-				case ' ':
-				case '-':
-					temp_ts.type = TT_FLOOR;
-					break;
-				case '#':
-					temp_ts.type = TT_WALL;
-					break;
-				case 'X':
-					temp_ts.type = TT_WALL;//TEMP
-					break;
-				case '.':
-					temp_ts.type = TT_FLOOR;
-					break;
-				case 'S':
-				case 'E':
-				case 'W':
-				case 'F':
-					temp_ts.type = TT_FLOOR;//TEMP
-					warnx("consoles not implemented yet");
-					break;
-				case '@':
-					temp_ts.type = TT_FLOOR;
-					for(k = 0; k < MAX_PLAYERS; k++)
-						if(gs->players[k].is_connected)
-							{gs->players[k].x = i; gs->players[k].y = j;}
-					break;
-			}
-
-			stsp->tiles_ptr[tile_index] = temp_ts;
-		}
-	}
-
-	//gs->curr_flow_state = FS_MAIN_GAME;
+	close(listening_sd);
 }

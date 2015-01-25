@@ -62,8 +62,8 @@ int main(int argc, char *argv[]) {
 				render(i, &gs);
 		}
 
-		warnx("sleeping for 1 second, stopgap measure");
 
+		//Sleep for 33 ms (~30fps)
 		struct timespec temp_time = { 0, FRAME_TIME};
 		nanosleep(&temp_time, NULL);
 	}
@@ -75,9 +75,6 @@ void print_usage() {
 
 	exit(-1);
 }
-
-
-
 
 //modifies c->curr_input_state with latest input received from client
 void get_input(client_struct* c) {
@@ -97,6 +94,9 @@ void update_input(int client_index, gamestate_struct* gs) {
 		case FS_CONNECTING:
 			update_input_connecting(client_index, gs);
 			break;
+		case FS_MAIN_GAME:
+			update_input_main_game(client_index, gs);
+			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
@@ -109,6 +109,9 @@ void update(gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			update_connecting(gs);
+			break;
+		case FS_MAIN_GAME:
+			update_main_game(gs);
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
@@ -125,6 +128,9 @@ void render(int client_index, gamestate_struct* gs) {
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			render_connecting(client_index, gs);
+			break;
+		case FS_MAIN_GAME:
+			render_main_game(client_index, gs);
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
