@@ -94,6 +94,13 @@ typedef enum _flow_state {
 	FS_CONNECTING
 } flow_state;
 
+typedef struct _encounter_struct {
+  	int enemy_location_x;
+  	int enemy_location_y;
+  	int enemy_max_health;
+  	int enemy_health;
+} encounter_struct;
+
 //MAX_PLAYERS defined in util.h
 typedef struct _gamestate_struct { //NOT DONE YET
 	flow_state curr_flow_state;//main game, connecting, dialogue box
@@ -105,11 +112,5 @@ typedef struct _gamestate_struct { //NOT DONE YET
   	encounter_struct encounter;
 } gamestate_struct;
 
-typedef struct _encounter_struct {
-  	int enemy_location_x;
-  	int enemy_location_y;
-  	int enemy_max_health;
-  	int enemy_health;
-} encounter_struct;
 
 #endif

@@ -43,19 +43,19 @@ void render_sensors_console(
 	  rp = (gs->clients[client_index].render.render_data);
 	  int alert = ALERT_PANEL_TOP;
   
-	  int enemy_x = gs->encounter->enemy_location_x;
-	  int enemy_y = gs->encounter->enemy_location_y;
-	  char* location;
-	  sprintf(location, "Enemy ship at coordinates &d, &d", enemy_x, enemy_y);
+	  int enemy_x = gs->encounter.enemy_location_x;
+	  int enemy_y = gs->encounter.enemy_location_y;
+	  char location[128];
+	  sprintf(location, "Enemy ship at coordinates %d, %d", enemy_x, enemy_y);
 
-	  int enemy_health = gs->encounter->enemy_health;
-	  int enemy_max = gs->encounter->enemy_max_health;
-	  char* health;
+	  int enemy_health = gs->encounter.enemy_health;
+	  int enemy_max = gs->encounter.enemy_max_health;
+	  char health[128];
 	  sprintf(health, "Enemy ship at health %d/%d", enemy_health, enemy_max);
 
-	  strncpy(rp[alert*SCREEN_WIDTH], location, SCREEN_WIDTH);
+	  strncpy(&rp[alert*SCREEN_WIDTH], location, SCREEN_WIDTH);
 	  alert++;
-	  strncpy(rp[alert*SCREEN_WIDTH], health, SCREEN_WIDTH);
+	  strncpy(&rp[alert*SCREEN_WIDTH], health, SCREEN_WIDTH);
 }
 
 void update_input_sensors_console(

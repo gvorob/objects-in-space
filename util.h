@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <time.h>
+#include <string.h>
 
 #define DEFAULT_PORT "9998"
 #define LOCALHOST "127.0.0.1"
