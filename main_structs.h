@@ -35,10 +35,10 @@ typedef struct _client_struct { //DONE
 
 
 typedef struct _player_struct {
-  int x;
-  int y;
-  int is_connected;
-  int is_at_console;
+	int x;
+	int y;
+	int is_at_console;
+	int is_connected;
 } player_struct;
 
 
@@ -113,5 +113,8 @@ typedef struct _gamestate_struct { //NOT DONE YET
   	encounter_struct encounter;
 } gamestate_struct;
 
+//tile checks
+int is_console(tile_type t);
+int is_walkable(tile_type t);
 
 #endif
