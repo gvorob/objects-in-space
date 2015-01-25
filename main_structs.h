@@ -23,7 +23,7 @@ typedef struct _client_render_struct {
   char render_data[SCREEN_WIDTH * SCREEN_HEIGHT];
 } client_render_struct;
 
-#define SCREEN_INDEX(x,y)
+#define SCREEN_INDEX(x,y) ((x) + (y) * (SCREEN_WIDTH))
 
 typedef struct _client_struct { //DONE
 	client_input_struct prev_input_state;
@@ -63,7 +63,7 @@ typedef struct _ship_tiles_struct {
   int height;
   tile_struct* tiles_ptr;
 } ship_tiles_struct;
-#define SHIP_TILES_INDEX(x, y, stsp)
+#define SHIP_TILES_INDEX(x, y, stsp) ((x) + (y) * (stsp)->width)
 
 //MAX CONSOLES TBD
 #define MAX_CONSOLES 2

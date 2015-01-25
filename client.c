@@ -99,21 +99,21 @@ void send_input(){
 	client_input_struct cis;
 
 
-	char ch = getch();
-	if (ch == UP){
-	  cis.up = 1;
-	}
-	if (ch == DOWN){
-	  cis.down = 1;
-	}
-	if (ch == LEFT){
-	  cis.left = 1;
-	}
-	if (ch == RIGHT){
-	  cis.right = 1;
-	}
-	if (ch == CONSOLE_LOCK){
-	  cis.console_lock = 1;
+	char ch;
+	while((ch = getch()) != ERR) {
+			if (ch == UP){
+			  cis.up = 1;
+			} else if (ch == DOWN){
+			  cis.down = 1;
+			} else if (ch == LEFT){
+			  cis.left = 1;
+			} else if (ch == RIGHT){
+			  cis.right = 1;
+			} else if (ch == CONSOLE_LOCK){
+			  cis.console_lock = 1;
+			} else {
+				warnx("unkown char");
+			}
 	}
 
 	
@@ -142,6 +142,7 @@ void get_render(){
 		while (i < SCREEN_HEIGHT){
 			addnstr(crs.render_data + i * SCREEN_WIDTH, SCREEN_WIDTH);
 			i++;
+			move(i, 0);
 		}
 
 		refresh();

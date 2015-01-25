@@ -63,7 +63,9 @@ int main(int argc, char *argv[]) {
 		}
 
 		warnx("sleeping for 1 second, stopgap measure");
-		sleep(1);
+
+		struct timespec temp_time = { 0, FRAME_TIME};
+		nanosleep(&temp_time, NULL);
 	}
 }
 
@@ -88,7 +90,7 @@ void get_input(client_struct* c) {
 
 //delegates to other files
 void update_input(int client_index, gamestate_struct* gs) {
-	if(gs->clients[client_index].socket_d == -1)
+	if(!gs->players[client_index].is_connected)
 		return;
 
 	switch(gs->curr_flow_state) {
@@ -116,7 +118,8 @@ void update(gamestate_struct* gs) {
 
 //delegates to other files
 void render(int client_index, gamestate_struct* gs) {
-	if(gs->clients[client_index].socket_d == -1)
+	//Only send if a client is connected
+	if(!gs->players[client_index].is_connected)
 		return;
 
 	switch(gs->curr_flow_state) {
@@ -133,6 +136,6 @@ void render(int client_index, gamestate_struct* gs) {
 			sizeof(client_render_struct), 
 			0))
 		warn("failed to send in render");
-	printf("sent render\n");
+	printf("sent render for player %d\n", client_index);
 }
 
