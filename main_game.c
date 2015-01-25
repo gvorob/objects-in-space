@@ -1,14 +1,21 @@
 #include "main_game.h"
 
 void update_input_main_game(int client_index, gamestate_struct* gs) {
-	client_input_struct* cisp;
-	player_struct* psp;
-
+ 	 client_input_struct* cisp;
+  	player_struct* psp;
+  
 	warnx("updating input for player %d", client_index);
 	
 	cisp = &(gs->clients[client_index].curr_input_state);
 	psp = &(gs->players[client_index]);
-
+	
+	if(psp->is_at_console){
+		///////////////////////////////
+	 	//NOT DONE YET
+	  	ship_tiles_struct tiles = gs->shipstate->tiles;
+	  	tile_struct player_tile = tiles->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, tiles)];
+	  	//////////////////////////////
+	}
 	if(cisp->up) {
 		psp->y--;
 	}

@@ -38,6 +38,7 @@ typedef struct _player_struct {
   int x;
   int y;
   int is_connected;
+  int is_at_console;
 } player_struct;
 
 
