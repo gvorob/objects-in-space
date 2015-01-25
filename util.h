@@ -20,6 +20,8 @@
 #define SCREEN_WIDTH 50
 #define SCREEN_HEIGHT 50
 
+#define SHIP_FILE "ship_layout.txt"
+
 //returns x if x is within the bounds
 //otherwise returns the bound itself
 int clamp(int x, int min, int max);
