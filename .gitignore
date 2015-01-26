@@ -28,3 +28,6 @@
 *.x86_64
 *.hex
 space
+
+#Vim swap files
+*.swp
