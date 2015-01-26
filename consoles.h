@@ -46,6 +46,7 @@ void render_sensors_console(
 	sensors_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_input_sensors_console(
+	int client_index, 
 	sensors_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_sensors_console(
