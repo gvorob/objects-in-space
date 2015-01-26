@@ -243,11 +243,12 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	}
 
 	//DEBUGGING
-	i = sprintf(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP), 
-			"is_at_console:%d", 
-			ps.is_at_console);
-	
-	rp[SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP) + i] = ';';
+	char temp_buff[999];
+	sprintf(temp_buff,"is_at_console:%d", ps.is_at_console);
+	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP), temp_buff, SCREEN_WIDTH);
+	sprintf(temp_buff,"fcss->charge:%f", 
+			((ftl_console_state_struct*)gs->shipstate.console_states[CI_FTL])->charge);
+	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP + 1), temp_buff, SCREEN_WIDTH);
 	
 	//Mark bottom right corner
 	rp[SCREEN_INDEX(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)] = '/';
@@ -324,19 +325,19 @@ void setup_game(gamestate_struct* gs){
 					break;
 				case 'S':
 					temp_ts.type = TT_SENSORS_CONSOLE;
-					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_SENSORS;
+					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_SENSORS];
 					break;
 				case 'E':
 					temp_ts.type = TT_ENGINES_CONSOLE;
-					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_ENGINES;
+					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_ENGINES];
 					break;
 				case 'W':
 					temp_ts.type = TT_WEAPONS_CONSOLE;
-					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_WEAPONS;
+					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_WEAPONS];
 					break;
 				case 'F':
 					temp_ts.type = TT_FTL_CONSOLE;
-					temp_ts.console_state_ptr = gs->shipstate.console_states + CI_FTL;
+					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_FTL];
 					break;
 				case '@':
 					temp_ts.type = TT_FLOOR;
@@ -350,5 +351,6 @@ void setup_game(gamestate_struct* gs){
 		}
 	}
 
+	//Set flow state
 	gs->curr_flow_state = FS_MAIN_GAME;
 }

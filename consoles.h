@@ -20,8 +20,18 @@ typedef struct _repairs_console_state_struct {
 
 }  repairs_console_state_struct;
 
-typedef struct _ftl_console_state_struct {
+#define FTL_LEFT_MARGIN 3
+#define FTL_MAX_DESTS 3
+#define FTL_MAX_DEST_STRING 30
+#define FTL_DESTS_TOP 5
+#define FTL_CHARGE_BAR_WIDTH ((CONSOLE_PANEL_WIDTH) - 2 * (FTL_CHARGE_BAR_LEFT))
+#define FTL_CHARGE_BAR_TOP ((CONSOLE_PANEL_HEIGHT) - 3)
+#define FTL_CHARGE_BAR_LEFT (FTL_LEFT_MARGIN)
 
+typedef struct _ftl_console_state_struct {
+	char destinations[FTL_MAX_DESTS][FTL_MAX_DEST_STRING];
+	int current;
+	float charge;
 }  ftl_console_state_struct;
 
 void init_weapons_console(

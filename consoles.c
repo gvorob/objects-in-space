@@ -133,33 +133,98 @@ void update_repairs_console(
 //FTL =================
 void init_ftl_console(
 		gamestate_struct* gs) {
-	warnx("init_ftl_console not yet implemented");
+	ftl_console_state_struct* fcss;
+	int i;
+
+	//Malloc a struct
+	fcss = (ftl_console_state_struct*) malloc(sizeof(ftl_console_state_struct));
+	if(fcss == NULL)
+		err(-1, "Failed to malloc in init_ftl_console");
+
+	//Init members
+	for(i = 0; i < FTL_MAX_DESTS; i++)
+		snprintf(fcss->destinations[i], FTL_MAX_DEST_STRING, "Destination #%d", i);
+	fcss->current = 0;
+	fcss->charge = 0;
+
+	//Add into gamestate
+	gs->shipstate.console_states[CI_FTL] = fcss;
 };
 
 void render_ftl_console(
 		int client_index, 
-		ftl_console_state_struct* wcss,
-		gamestate_struct* gs) {
+		ftl_console_state_struct *fcss,
+		gamestate_struct *gs) {
 
-	char* rp;
+	char *rp, *temp_rp;
+	//int left_offset;
+	int i;
+	char message_string[] = "                   FTL Drive";
+	char charged_string[] = "                    CHARGED";
+
+	//prepare pointers
 	rp = (gs->clients[client_index].render.render_data);
   
-	char message_string[] = "FTL Drive";
+	//Render title
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
+			message_string, 
+			CONSOLE_PANEL_WIDTH);
 
-	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_TOP), message_string, 99);
+	//render charge bar
+	int charge_width = (int)((fcss->charge) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
+	temp_rp = (char *)(rp + SCREEN_INDEX(
+			FTL_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
+			FTL_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
+	for(i = 0; i < FTL_CHARGE_BAR_WIDTH; i++) {
+		temp_rp[i] = (i > charge_width) ? '-' : '+';
+	}
+	
+	//CHARGED message
+	if(fcss->charge >= 1.0f)
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, FTL_CHARGE_BAR_TOP + 1), 
+				charged_string, 
+				CONSOLE_PANEL_WIDTH);
+
+	//Show destinations
+	for(i = 0; i < FTL_MAX_DESTS; i++) {
+		render_strcpy(rp + 
+				SCREEN_INDEX(
+						CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN, 
+						CONSOLE_PANEL_TOP + FTL_DESTS_TOP + i * 2), 
+				fcss->destinations[i], 
+				CONSOLE_PANEL_WIDTH - FTL_LEFT_MARGIN);
+	}
+
+	//Show current destination
+	rp[SCREEN_INDEX(
+				CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN - 1, 
+				CONSOLE_PANEL_TOP + FTL_DESTS_TOP + fcss->current * 2)] = '>';
 }
 
 void update_input_ftl_console(
 		int client_index, 
-		ftl_console_state_struct* wcss,
+		ftl_console_state_struct* fcss,
 		gamestate_struct* gs) {
-	warnx("update_input_ftl_console not yet implemented");
+	
+	client_input_struct* cisp;
+	cisp = &(gs->clients[client_index].curr_input_state);
+
+	if(cisp->up) {
+		fcss->current--;
+	}
+	if(cisp->down) {
+		fcss->current++;
+	}
+
+	fcss->current = clamp(fcss->current, 0, FTL_MAX_DESTS - 1);
 }
 
 void update_ftl_console(
-		ftl_console_state_struct* wcss,
+		ftl_console_state_struct* fcss,
 		gamestate_struct* gs) {
-	warnx("update_ftl_console not yet implemented");
+	//Has to charge in 20 seconds
+	//20 * 30 = 600 frams
+	fcss->charge = fclamp(fcss->charge + 1.0f/600.0f, 0, 1);
 }
 //==========================
 

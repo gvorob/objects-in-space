@@ -13,7 +13,7 @@
 #define BACKLOG 5
 
 #define MAX_PLAYERS 16
-#define PLAYERS_TO_START 2
+#define PLAYERS_TO_START 1
 
 //frame delay in nanoseconds
 #define FRAME_TIME (33 * 1000 * 1000)
@@ -40,8 +40,10 @@
 
 #define ALERT_PANEL_LEFT 0
 #define ALERT_PANEL_RIGHT (SCREEN_WIDTH)
+#define CONSOLE_PANEL_WIDTH ((CONSOLE_PANEL_RIGHT) - (CONSOLE_PANEL_LEFT))
 #define ALERT_PANEL_TOP ((SHIP_PANEL_BOTTOM) + 1)
 #define ALERT_PANEL_BOTTOM (SCREEN_HEIGHT)
+#define CONSOLE_PANEL_HEIGHT ((CONSOLE_PANEL_BOTTOM) - (CONSOLE_PANEL_TOP))
 
 //MAX CONSOLES TBD
 #define MAX_CONSOLES 8
@@ -51,6 +53,7 @@
 //returns x if x is within the bounds
 //otherwise returns the bound itself
 int clamp(int x, int min, int max);
+float fclamp(float x, float min, float max);
 
 //copies the string without copying the terminating null
 void render_strcpy(char* dest, char* src, int max_len);
