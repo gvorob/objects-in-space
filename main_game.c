@@ -5,7 +5,7 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 	player_struct* psp;
 	ship_tiles_struct* stsp;
 
-	//prepare temporary pointers
+	//Prepare temporary pointers
 	cisp = &(gs->clients[client_index].curr_input_state);
 	psp = &(gs->players[client_index]);
 	stsp = &(gs->shipstate.tiles);
@@ -53,16 +53,65 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 			psp->y = tempy;
 		}
 	} else { //Otherwise, delegate to the appropriate console
-		/*
-	 	//NOT DONE YET
-	  	ship_tiles_struct tiles = gs->shipstate->tiles;
-	  	tile_struct player_tile = tiles->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, tiles)];
-		*/
+		tile_struct temp;
+		void* csp; //console state pointer
+
+		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, stsp)];
+		csp = temp.console_state_ptr;
+		switch(temp.type) {
+			case TT_WEAPONS_CONSOLE:
+				update_input_weapons_console(
+						client_index, 
+						(weapons_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_SENSORS_CONSOLE:
+				update_input_sensors_console(
+						client_index, 
+						(sensors_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_ENGINES_CONSOLE:
+				update_input_engines_console(
+						client_index, 
+						(engines_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_FTL_CONSOLE:
+				update_input_ftl_console(
+						client_index, 
+						(ftl_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_REPAIRS_CONSOLE:
+				update_input_repairs_console(
+						client_index, 
+						(repairs_console_state_struct*) csp,
+						gs);
+				break;			
+			default:
+				warnx("Is at console but isn't at console. ???");
+				break;
+		}
 	}
 }
 
 void update_main_game(gamestate_struct* gs) {
 	warnx("update_main_game not yet implemented");
+
+	//delegate to consoles as well
+	update_sensors_console(
+			(sensors_console_state_struct *) gs->shipstate.console_states[CI_SENSORS],
+			gs);
+	update_weapons_console(
+			(weapons_console_state_struct *) gs->shipstate.console_states[CI_WEAPONS],
+			gs);
+	update_engines_console(
+			(engines_console_state_struct *) gs->shipstate.console_states[CI_ENGINES],
+			gs);
+	update_ftl_console(
+			(ftl_console_state_struct *) gs->shipstate.console_states[CI_FTL],
+			gs);
 }
 
 void render_main_game(int client_index, gamestate_struct* gs) {
@@ -91,11 +140,19 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 					rp[SCREEN_INDEX(i,j)] = '.';
 					break;
 				case TT_WEAPONS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'W'; //temporary, just marks as console
+					break;
 				case TT_SENSORS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'S'; //temporary, just marks as console
+					break;
 				case TT_ENGINES_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'E'; //temporary, just marks as console
+					break;
 				case TT_REPAIRS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'R'; //temporary, just marks as console
+					break;
 				case TT_FTL_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'C'; //temporary, just marks as console
+					rp[SCREEN_INDEX(i,j)] = 'F'; //temporary, just marks as console
 					break;
 				case TT_WALL:
 					rp[SCREEN_INDEX(i,j)] = '#';
@@ -119,8 +176,52 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 		}
 	}
 
-	//DEBUGGING
+	//Delegate rendering to consoles (if applicable)
 	ps = gs->players[client_index];
+	if(ps.is_at_console) {
+		tile_struct temp;
+		void* csp; //console state pointer
+
+		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(ps.x, ps.y, stsp)];
+		csp = temp.console_state_ptr;
+		switch(temp.type) {
+			case TT_WEAPONS_CONSOLE:
+				render_weapons_console(
+						client_index, 
+						(weapons_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_SENSORS_CONSOLE:
+				render_sensors_console(
+						client_index, 
+						(sensors_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_ENGINES_CONSOLE:
+				render_engines_console(
+						client_index, 
+						(engines_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_FTL_CONSOLE:
+				render_ftl_console(
+						client_index, 
+						(ftl_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_REPAIRS_CONSOLE:
+				render_repairs_console(
+						client_index, 
+						(repairs_console_state_struct*) csp,
+						gs);
+				break;			
+			default:
+				warnx("Is at console but isn't at console. ???");
+				break;
+		}
+	}
+
+	//DEBUGGING
 	sprintf(rp + SCREEN_INDEX(0, stsp->height), "is_at_console:%d", ps.is_at_console);
 
 }

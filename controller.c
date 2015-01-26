@@ -125,6 +125,10 @@ void render(int client_index, gamestate_struct* gs) {
 	if(!gs->players[client_index].is_connected)
 		return;
 
+	client_render_struct* crsp;
+	crsp = &(gs->clients[client_index].render);
+	memset(crsp->render_data, 0, sizeof(crsp->render_data));
+
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
 			render_connecting(client_index, gs);
@@ -138,7 +142,7 @@ void render(int client_index, gamestate_struct* gs) {
 	}
 
 	if(-1 == send(gs->clients[client_index].socket_d, 
-			&(gs->clients[client_index].render),
+			crsp,
 			sizeof(client_render_struct), 
 			0))
 		warn("failed to send in render");
