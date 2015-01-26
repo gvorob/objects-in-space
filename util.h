@@ -52,4 +52,11 @@
 //otherwise returns the bound itself
 int clamp(int x, int min, int max);
 
+//copies the string without copying the terminating null
+void render_strcpy(char* dest, char* src, int max_len);
+
+//what it says on the tine
+int max(int a, int b);
+int min(int a, int b);
+
 #endif

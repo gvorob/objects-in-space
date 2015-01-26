@@ -140,7 +140,13 @@ void render_ftl_console(
 		int client_index, 
 		ftl_console_state_struct* wcss,
 		gamestate_struct* gs) {
-	warnx("render_ftl_console not yet implemented");
+
+	char* rp;
+	rp = (gs->clients[client_index].render.render_data);
+  
+	char message_string[] = "FTL Drive";
+
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_TOP), message_string, 99);
 }
 
 void update_input_ftl_console(
