@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	if(is_client) {
 		//Client main loop in here
 		//Won't return from this
-		init_client(LOCALHOST, DEFAULT_PORT);//TEMP
+		init_client(ip_string, DEFAULT_PORT);//TEMP
 		err(0, "Client returned from main loop");
 	}
 
