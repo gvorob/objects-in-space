@@ -5,21 +5,31 @@ void init_weapons_console(
 		gamestate_struct* gs) {
 	warnx("init_weapons_console not yet implemented");
 };
-
+/*renders the console overlay, which will have
+the weapons systems displays as well as the
+enemy ship layout
+ */
 void render_weapons_console(
 		int client_index, 
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
+	
 	warnx("render_weapons_console not yet implemented");
 }
-
+/*
+takes input from the user, say wasd, to change the target of the weapon chosen
+also can change weapon with another key
+*/
 void update_input_weapons_console(
 		int client_index, 
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	warnx("update_input_weapons_console not yet implemented");
 }
-
+/*
+updates the console by making the charge bar update per weapon, as well as process
+damage on enemy ship and a whole load of other combat mechanics
+ */
 void update_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
