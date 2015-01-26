@@ -125,6 +125,20 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	rp = (gs->clients[client_index].render.render_data);
 	stsp = &(gs->shipstate.tiles);
 
+	/* //Clear ship bg
+	for(i = SHIP_PANEL_LEFT; i < SHIP_PANEL_RIGHT; i++) {
+		for(j = SHIP_PANEL_TOP; j < SHIP_PANEL_BOTTOM; j++) {
+			rp[SCREEN_INDEX(i,j)] = '^';
+		}
+	} */
+
+	//Draw crossbars
+	for(j = 0; j < SHIP_PANEL_BOTTOM; j++) {
+			rp[SCREEN_INDEX(SHIP_PANEL_RIGHT,j)] = '|';
+	}
+	for(i = 0; i < SCREEN_WIDTH; i++) {
+			rp[SCREEN_INDEX(i, SHIP_PANEL_BOTTOM)] = '=';
+	}
 
 	//Render Ship
 	for(i = 0; i < stsp->width; i++) {
@@ -176,6 +190,13 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 		}
 	}
 
+	/* //Clear console bg
+	for(i = CONSOLE_PANEL_LEFT; i < CONSOLE_PANEL_RIGHT; i++) {
+		for(j = CONSOLE_PANEL_TOP; j < CONSOLE_PANEL_BOTTOM; j++) {
+			rp[SCREEN_INDEX(i,j)] = '%';
+		}
+	} */
+
 	//Delegate rendering to consoles (if applicable)
 	ps = gs->players[client_index];
 	if(ps.is_at_console) {
@@ -222,8 +243,11 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	}
 
 	//DEBUGGING
-	sprintf(rp + SCREEN_INDEX(0, stsp->height), "is_at_console:%d", ps.is_at_console);
-
+	i = sprintf(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP), 
+			"is_at_console:%d", 
+			ps.is_at_console);
+	
+	rp[SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP) + i] = ';';
 }
 
 /*

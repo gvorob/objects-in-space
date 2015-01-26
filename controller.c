@@ -127,7 +127,7 @@ void render(int client_index, gamestate_struct* gs) {
 
 	client_render_struct* crsp;
 	crsp = &(gs->clients[client_index].render);
-	memset(crsp->render_data, 0, sizeof(crsp->render_data));
+	memset(crsp->render_data, ' ', sizeof(crsp->render_data));
 
 	switch(gs->curr_flow_state) {
 		case FS_CONNECTING:
