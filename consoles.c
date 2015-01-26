@@ -3,7 +3,32 @@
 //WEAPONS =================
 void init_weapons_console(
 		gamestate_struct* gs) {
-	warnx("init_weapons_console not yet implemented");
+	
+	weapons_console_state_struct* wcss;
+	
+	wcss = (weapons_console_state_struct *)malloc(sizeof(weapons_console_state_struct));
+	
+	wcss->targx = 0;
+	wcss->targy = 0;
+
+	int i = 0;
+	for (i = 0; i < WEAPONS_MAX_WEAP;i++){
+		if (i == 0){
+			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
+					 "Missiles");
+		} else if (i == 1){
+			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
+					 "Lasers");
+		} else {
+			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
+					 "Weapon %d",i);
+		}
+		wcss->weapon_charges[i] = 100;
+	}
+	
+	gs->shipstate.console_states[CI_WEAPONS] = wcss;
+	
+	//warnx("init_weapons_console not yet implemented");
 };
 /*renders the console overlay, which will have
 the weapons systems displays as well as the

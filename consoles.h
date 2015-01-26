@@ -4,8 +4,13 @@
 #include "main_structs.h"
 #include "util.h"
 
+#define WEAPONS_MAX_WEAP 2
+#define WEAPONS_MAX_WEAP_STRING 20
 typedef struct _weapons_console_state_struct {
-
+	int targx;
+	int targy;
+	char weapon_names[WEAPONS_MAX_WEAP][WEAPONS_MAX_WEAP_STRING];
+	double weapon_charges[WEAPONS_MAX_WEAP];
 }  weapons_console_state_struct;
 
 typedef struct _sensors_console_state_struct {
