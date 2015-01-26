@@ -5,21 +5,14 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 	player_struct* psp;
 	ship_tiles_struct* stsp;
 
-	warnx("updating input for player %d", client_index);
-	
+	//prepare temporary pointers
 	cisp = &(gs->clients[client_index].curr_input_state);
 	psp = &(gs->players[client_index]);
-
-	if(psp->is_at_console){
-		///////////////////////////////
-	 	//NOT DONE YET
-	  	ship_tiles_struct tiles = gs->shipstate->tiles;
-	  	tile_struct player_tile = tiles->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, tiles)];
-	  	//////////////////////////////
-	}
-
 	stsp = &(gs->shipstate.tiles);
 
+	warnx("updating input for player %d", client_index);
+
+	//Handle locking to console
 	if(cisp->console_lock) {
 		//If standing on a console
 		tile_struct temp_tile;
@@ -29,7 +22,7 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 		}
 	}
 
-	//Walk around
+	//If not at a console, walk around
 	if(!psp->is_at_console) {
 		int tempx, tempy;
 		tile_struct temp_tile;
@@ -59,6 +52,12 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 			psp->x = tempx;
 			psp->y = tempy;
 		}
+	} else { //Otherwise, delegate to the appropriate console
+		/*
+	 	//NOT DONE YET
+	  	ship_tiles_struct tiles = gs->shipstate->tiles;
+	  	tile_struct player_tile = tiles->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, tiles)];
+		*/
 	}
 }
 
