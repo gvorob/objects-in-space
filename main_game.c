@@ -248,6 +248,9 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 			ps.is_at_console);
 	
 	rp[SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP) + i] = ';';
+	
+	//Mark bottom right corner
+	rp[SCREEN_INDEX(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)] = '/';
 }
 
 /*
