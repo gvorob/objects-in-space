@@ -23,3 +23,7 @@ void render_strcpy(char* dest, char* src, int max_len) {
 
 int max(int a, int b) {return a > b ? a : b;}
 int min(int a, int b) {return a < b ? a : b;}
+
+int secs_to_frames(float s) {
+	return (int)(s * 33.0f);
+}

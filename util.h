@@ -62,4 +62,7 @@ void render_strcpy(char* dest, char* src, int max_len);
 int max(int a, int b);
 int min(int a, int b);
 
+//Turns a float time in seconds into frames
+int secs_to_frames(float s);
+
 #endif
