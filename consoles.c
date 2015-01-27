@@ -491,7 +491,7 @@ void render_engines_console(
 	//Print flight mode message
 	render_strcpy(rp + 
 			SCREEN_INDEX(temp_x, temp_y),
-			"Choose trajectory type:",
+			"Choose trajectory type (not working):",
 			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
 
 	temp_x += 2;
@@ -734,6 +734,9 @@ void render_ftl_console(
 				CONSOLE_PANEL_TOP + FTL_DESTS_TOP + fcss->current * 2)] = '>';
 }
 
+void setup_encounter(gamestate_struct *gs);
+void cleanup_encounter(gamestate_struct *gs);
+
 void update_input_ftl_console(
 		int client_index, 
 		int metadata,
@@ -748,6 +751,11 @@ void update_input_ftl_console(
 	}
 	if(cisp->down) {
 		fcss->current++;
+	}
+	if(cisp->confirm && gs->shipstate.ftl_charge >= 1) {
+		cleanup_encounter(gs);
+		setup_encounter(gs);
+		gs->shipstate.ftl_charge = 0;
 	}
 
 	fcss->current = clamp(fcss->current, 0, FTL_MAX_DESTS - 1);

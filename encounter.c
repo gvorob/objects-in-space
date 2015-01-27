@@ -25,7 +25,12 @@ void setup_encounter(gamestate_struct* gs) {
 }
 
 void cleanup_encounter(gamestate_struct* gs) {
-	warnx("cleanup_encounter not yet implemented");
+	shot_struct *ssp, *temp;
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ) {
+		temp = ssp->next->next;
+		free(ssp->next);
+		ssp->next = temp;
+	}
 }
 
 void update_shots(gamestate_struct* gs) {
