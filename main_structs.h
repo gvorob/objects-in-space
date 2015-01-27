@@ -93,7 +93,14 @@ typedef enum _weapon_type {
 	WT_FLAK,
 	WT_PLASMA
 } weapon_type;
+#define WT_LASER_CT 30
+#define WT_MISSILE_CT 60
 
+#define WT_LASER_MAXDMG 5
+#define WT_LASER_MINDMG 3
+
+#define WT_MISSILE_MAXDMG 6
+#define WT_MISSILE_MINDMG 5
 typedef struct _weapon_struct {
 	weapon_type type;
 	int time_to_charge;

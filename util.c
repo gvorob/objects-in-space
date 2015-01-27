@@ -39,3 +39,8 @@ float rand_float(float min, float max) {
 float euclid_dist(float x, float y) {
 	return sqrtf(x * x + y * y);
 }
+
+float cartesian_dist(float x1,float y1,float x2, float y2){
+	return sqrtf((x2 - x1) * (x2 - x1) +
+				 (y2 - y1) * (y2 - y1));
+}

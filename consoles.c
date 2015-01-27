@@ -20,7 +20,7 @@ void init_weapons_console(
 		} else {
 			//well
 		}
-		wcss->weapon_charges[i] = 100;
+		wcss->weapon_charges[i] = 0;
 	}
 	
 	gs->shipstate.console_states[CI_WEAPONS] = wcss;
@@ -37,7 +37,7 @@ void render_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	
-	warnx("render_weapons_console not yet implemented");
+	//warnx("render_weapons_console not yet implemented");
 
 	char *rp;
 	char title_string[] = "                   Weapons (WIP)";
@@ -50,31 +50,70 @@ void render_weapons_console(
 			title_string, 
 			CONSOLE_PANEL_WIDTH);
 	if (metadata == 0){//aiming
+		/*
 		char aiming_string[] = "Aiming stuff here";
 		
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP),
 					  aiming_string,
 					  CONSOLE_PANEL_WIDTH);
-		
+		*/
 		//hard-coded thing right here
-		/*
+		
 		char current_weapon_string[CONSOLE_PANEL_WIDTH];
 		if(wcss->current_weapon == 0){
-			strcpy(current_weapon_string,"Lasers");
+			strcpy(current_weapon_string,"Current Weapon: Lasers");
 		} else {
-			strcpy(current_weapon_string,"Missiles");
+			strcpy(current_weapon_string,"Current Weapon: Missiles");
 		}
-			
+		
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+2),
 					  current_weapon_string,
 					  CONSOLE_PANEL_WIDTH);
-		*/
+
+		char current_weapon_target[CONSOLE_PANEL_WIDTH];
+
+		sprintf(current_weapon_target,"Targeting: (%f,%f)",
+				wcss->target_xs[wcss->current_weapon],
+				wcss->target_ys[wcss->current_weapon]);
+
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+4),
+					  current_weapon_target,
+					  CONSOLE_PANEL_WIDTH);		
+		//instructions
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 2),
+			WEAPONS_AIMING_INSTRUCTIONS_STRING, 
+			CONSOLE_PANEL_WIDTH - 2);
+		
 	} else if (metadata == 1){//status
+		/*
 		char status_string[] = " Test status here";
 
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP),
 					  status_string,
 					  CONSOLE_PANEL_WIDTH);
+		*/
+		char current_weapon_string[CONSOLE_PANEL_WIDTH];
+		char current_weapon_charge[CONSOLE_PANEL_WIDTH];
+		if(wcss->current_weapon == 0){
+			strcpy(current_weapon_string,"Lasers");
+			sprintf(current_weapon_charge,"%lf/%d",wcss->weapon_charges[wcss->current_weapon],WT_LASER_CT);
+		} else {
+			strcpy(current_weapon_string,"Missiles");
+			sprintf(current_weapon_charge,"%lf/%d",wcss->weapon_charges[wcss->current_weapon],WT_MISSILE_CT);
+		}
+		
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+2),
+					  current_weapon_string,
+					  CONSOLE_PANEL_WIDTH);
+
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+4),
+					  current_weapon_charge,
+					  CONSOLE_PANEL_WIDTH);
+		
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 2),
+			WEAPONS_STATUS_INSTRUCTIONS_STRING, 
+			CONSOLE_PANEL_WIDTH - 2);
+		
 	}
 	
 	
@@ -92,6 +131,7 @@ void update_input_weapons_console(
 	client_input_struct * cisp;
 	cisp = &(gs->clients[client_index].curr_input_state);
 	if (metadata == 0){//aiming
+		//not drifting, just moving
 		if (cisp->up){
 			wcss->target_ys[wcss->current_weapon]++;
 		}
@@ -102,15 +142,75 @@ void update_input_weapons_console(
 			wcss->target_xs[wcss->current_weapon]--;
 		}
 		if (cisp->right){
-			wcss->target_xs[wcss->current_weapon]--;
+			wcss->target_xs[wcss->current_weapon]++;
 		}
 		if (cisp->cancel){
 			wcss->current_weapon = 1 - wcss->current_weapon;//0 and 1
 		}
+		
 		//what we could do is text input
 		//or we could use wasd and then e to confirm the spot to fire at
 	} else if (metadata == 1){//status
 		//nothing to do unless multiple tabs for further confusion
+		if (cisp->cancel){
+			wcss->current_weapon = 1 - wcss->current_weapon;//0 and 1
+		}
+		if (cisp->confirm){
+			//fire
+			//so much hardcoding
+			float targeting_x;
+			float targeting_y;
+			targeting_x = wcss->target_xs[wcss->current_weapon];
+			targeting_y = wcss->target_ys[wcss->current_weapon];		
+			int damage;
+
+			float enemy_x;
+			float enemy_y;
+			enemy_x = gs->encounter.enemy_location_x;
+			enemy_y = gs->encounter.enemy_location_y;
+			
+			float offset;
+			offset = cartesian_dist(targeting_x,targeting_y,enemy_x,enemy_y);
+			if (wcss->current_weapon == 0){//laser
+				if (wcss->weapon_charges[wcss->current_weapon] == WT_LASER_CT){
+					//firing code
+					damage = rand_int(WT_LASER_MINDMG,WT_LASER_MAXDMG);
+					if (offset < 0.35){
+						damage = (int)(0.9 * damage);
+					} else if (offset < 0.70){
+						damage = (int)(0.5 * damage);
+					} else if (offset < 1.05){
+						damage = (int)(0.2 * damage);
+					} else {
+						damage = 0;
+					}
+					//reset
+					wcss->weapon_charges[wcss->current_weapon] = 0;
+					gs->encounter.enemy_health-=damage;
+				} else {
+					//no fire
+				}
+			} else if (wcss->current_weapon == 1){//missile
+				if (wcss->weapon_charges[wcss->current_weapon] == WT_MISSILE_CT){
+					//firing code
+					damage = rand_int(WT_MISSILE_MINDMG,WT_MISSILE_MAXDMG);
+					if (offset < 0.35){
+						//full damage
+					} else if (offset < 0.70){
+						//full damage
+					} else if (offset < 1.05){
+						damage = 0;
+					} else {
+						damage = 0;
+					}
+					//reset
+					wcss->weapon_charges[wcss->current_weapon] = 0;
+					gs->encounter.enemy_health-=damage;
+				} else {
+					//no fire
+				}
+			}
+		}
 	}
 	
 	//warnx("update_input_weapons_console not yet implemented");
@@ -122,13 +222,16 @@ damage on enemy ship and a whole load of other combat mechanics
 void update_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
-	//if (metadata == 0){//aiming
+	//temporary until a better place is found for it
+	int i;
+	for (i = 0; i < WEAPONS_MAX_WEAP;i++){
+		if ((i == 0 && wcss->weapon_charges[i] < WT_LASER_CT)
+			|| (i == 1 && wcss->weapon_charges[i] < WT_MISSILE_CT)){
+			wcss->weapon_charges[i]++;
+		}
+	}
 
-	//} else if (metadata == 1){//status
-
-	//}
-
-	warnx("update_weapons_console not yet implemented");
+	//warnx("update_weapons_console not yet implemented");
 }
 //==========================
 

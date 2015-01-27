@@ -75,4 +75,6 @@ float rand_float(float min, float max);
 //euclidean distance
 float euclid_dist(float x, float y);
 
+//cartesian distance
+float cartesian_dist(float x1, float y1, float x2, float y2);
 #endif

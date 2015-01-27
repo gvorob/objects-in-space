@@ -6,8 +6,13 @@
 
 #define INSTRUCTIONS_STRING "Press e to confirm; q to go back; w/a/s/d move around; space to exit"
 
+
 #define WEAPONS_MAX_WEAP 2
 #define WEAPONS_MAX_WEAP_STRING 20
+
+#define WEAPONS_AIMING_INSTRUCTIONS_STRING "Use w/a/s/d to change where you are targeting; q to change weapons"
+#define WEAPONS_STATUS_INSTRUCTIONS_STRING "Use e to fire, q to change weapons"
+
 typedef enum _weapons_console_type{
 	WCT_AIM,
 	WCT_STAT,
