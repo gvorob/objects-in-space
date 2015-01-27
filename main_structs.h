@@ -143,7 +143,7 @@ typedef struct _encounter_struct {
 	float enemy_location_y;
   	float target_x;
 	float target_y;
-	int loiter_time;
+	int loiter_time; //if loiter == -1, then is moving, otherwise is loitering
 	int fire_delay;
 	shot_struct shots_list;
 
