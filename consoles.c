@@ -393,7 +393,6 @@ void init_ftl_console(
 	for(i = 0; i < FTL_MAX_DESTS; i++)
 		snprintf(fcss->destinations[i], FTL_MAX_DEST_STRING, "Destination #%d", i);
 	fcss->current = 0;
-	fcss->charge = 0;
 
 	//Add into gamestate
 	gs->shipstate.console_states[CI_FTL] = fcss;
@@ -420,7 +419,7 @@ void render_ftl_console(
 			CONSOLE_PANEL_WIDTH);
 
 	//render charge bar
-	int charge_width = (int)((fcss->charge) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
+	int charge_width = (int)((gs->shipstate.ftl_charge) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
 	temp_rp = (char *)(rp + SCREEN_INDEX(
 			FTL_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
 			FTL_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
@@ -429,7 +428,7 @@ void render_ftl_console(
 	}
 	
 	//CHARGED message
-	if(fcss->charge >= 1.0f)
+	if(gs->shipstate.ftl_charge >= 1.0f)
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, FTL_CHARGE_BAR_TOP + 1), 
 				charged_string, 
 				CONSOLE_PANEL_WIDTH);
@@ -472,8 +471,5 @@ void update_input_ftl_console(
 void update_ftl_console(
 		ftl_console_state_struct* fcss,
 		gamestate_struct* gs) {
-	//Has to charge in 20 seconds
-	//20 * 30 = 600 frams
-	fcss->charge = fclamp(fcss->charge + 1.0f/600.0f, 0, 1);
 }
 //==========================

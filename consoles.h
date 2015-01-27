@@ -48,7 +48,6 @@ typedef struct _repairs_console_state_struct {
 typedef struct _ftl_console_state_struct {
 	char destinations[FTL_MAX_DESTS][FTL_MAX_DEST_STRING];
 	int current;
-	float charge;
 }  ftl_console_state_struct;
 
 #define ENGINES_LEFT_MARGIN 3

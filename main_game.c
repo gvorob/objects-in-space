@@ -104,10 +104,34 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 }
 
 void update_main_game(gamestate_struct* gs) {
-	warnx("update_main_game not yet implemented");
+	shot_struct *ssp;
+	//update shots
+		//walk the LL
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ) {
+		ssp->next->time_to_fly--;
+
+		//if hit
+		if(!ssp->next->time_to_fly) {
+			//deal damage
+			gs->shipstate.health--;
+			//delete the shot
+			ssp->next = ssp->next->next;
+
+		} else {
+			//Walk the list manually so that we can delete things as we go
+			ssp = ssp->next;
+		}
+	}
+
+	//Update ftl charge
+		//Has to charge in 20 seconds
+		//20 * 30 = 600 frams
+	gs->shipstate.ftl_charge = 
+			fclamp(gs->shipstate.ftl_charge + 1.0f/secs_to_frames(SHIP_FTL_CHARGE_TIME), 0, 1);
 
 	//update enemy
 	encounter_move_enemy(gs);
+	encounter_try_firing(gs);
 
 	//delegate to consoles as well
 	update_sensors_console(
@@ -134,13 +158,6 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	//Prepare pointers
 	rp = (gs->clients[client_index].render.render_data);
 	stsp = &(gs->shipstate.tiles);
-
-	/* //Clear ship bg
-	for(i = SHIP_PANEL_LEFT; i < SHIP_PANEL_RIGHT; i++) {
-		for(j = SHIP_PANEL_TOP; j < SHIP_PANEL_BOTTOM; j++) {
-			rp[SCREEN_INDEX(i,j)] = '^';
-		}
-	} */
 
 	//Draw crossbars
 	for(j = 0; j < SHIP_PANEL_BOTTOM; j++) {
@@ -200,12 +217,32 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 		}
 	}
 
-	/* //Clear console bg
-	for(i = CONSOLE_PANEL_LEFT; i < CONSOLE_PANEL_RIGHT; i++) {
-		for(j = CONSOLE_PANEL_TOP; j < CONSOLE_PANEL_BOTTOM; j++) {
-			rp[SCREEN_INDEX(i,j)] = '%';
+	//Draw in laser shots
+	shot_struct *ssp;
+
+	//walk the LL
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ssp = ssp->next) {
+		int temp_x, temp_y;
+		shot_struct *temp_ssp = ssp->next;
+
+		//If shot is onscreen
+		if(temp_ssp->time_to_fly < temp_ssp->entry_time) {
+			//goes from 1 -> 0 as shot approaches target from edge of screen
+			float rev_percent_of_trip = ((float)temp_ssp->time_to_fly / (float)temp_ssp->entry_time);
+
+			temp_x = temp_ssp->target_x + 
+					(int)(rev_percent_of_trip * (temp_ssp->entry_x - temp_ssp->target_x));
+			temp_y = temp_ssp->target_y + 
+					(int)(rev_percent_of_trip * (temp_ssp->entry_y - temp_ssp->target_y));
+
+			if(temp_x != clamp(temp_x, 0, SCREEN_WIDTH))
+				err(-1, "WOOPX %d %f", temp_x, rev_percent_of_trip);
+			if(temp_y != clamp(temp_y, 0, SCREEN_HEIGHT))
+				err(-1, "WOOPY %d %f", temp_y, rev_percent_of_trip);
+
+			rp[SCREEN_INDEX(temp_x, temp_y)] = '+';
 		}
-	} */
+	}
 
 	//Delegate rendering to consoles (if applicable)
 	ps = gs->players[client_index];
@@ -291,10 +328,12 @@ void setup_game(gamestate_struct* gs){
 
 	stsp = &(gs->shipstate.tiles);
 
-	//free existing tile array
-	free(stsp->tiles_ptr);
-	stsp->tiles_ptr = NULL;
-
+	//initialize ship stats
+	gs->shipstate.health = SHIP_MAX_HEALTH; 
+	gs->shipstate.ftl_charge = 0;
+	gs->shipstate.aim_x = 0;
+	gs->shipstate.aim_y = 0;
+	
 	//prepare consoles
 	for(i = 0; i < MAX_CONSOLES; i++)
 		gs->shipstate.console_states[i] = NULL;
@@ -302,6 +341,14 @@ void setup_game(gamestate_struct* gs){
 	init_engines_console(gs);
 	init_sensors_console(gs);
 	init_ftl_console(gs);
+
+	//========================
+	//LOAD IN SHIP LAYOUT
+
+	//free existing tile array
+	free(stsp->tiles_ptr);
+	stsp->tiles_ptr = NULL;
+
 
 	//start reading in ship layout
 	FILE* file = fopen(SHIP_FILE, "r");
@@ -379,6 +426,10 @@ void setup_game(gamestate_struct* gs){
 		}
 	}
 
+	//DONE LOADING IN SHIP LAYOUT
+	//===============================
+
+	//prepare enemy and other non-ship data
 	setup_encounter(gs);
 
 	//Set flow state
