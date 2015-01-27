@@ -118,6 +118,8 @@ typedef struct _shipstate_struct {
   	float aim_x, aim_y;
   	int health; //0-20
   	float ftl_charge; //0-1
+  	float evasive_action;
+  	
 } shipstate_struct;
 
 typedef enum _flow_state {

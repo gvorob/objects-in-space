@@ -115,6 +115,16 @@ void update_main_game(gamestate_struct* gs) {
 	update_ftl_console(
 			(ftl_console_state_struct *) gs->shipstate.console_states[CI_FTL],
 			gs);
+
+	//update evasion
+	int evasion = secs_to_frames(2);
+	float down_per_frame = (float)(1 / (float)evasion);
+	gs->shipstate.evasive_action = fclamp((gs->shipstate.evasive_action)-(down_per_frame), 0, 1);
+	
+	//update heat
+	int time_to_cool = secs_to_frames(10);
+	float cool_per_frame = (float)(1 / (float)time_to_cool);
+	gs->shipstate.engine_heat = fclamp((gs->shipstate.engine_heat)-(cool_per_frame), 0, 1);
 }
 
 void render_main_game(int client_index, gamestate_struct* gs) {
@@ -365,6 +375,15 @@ void setup_game(gamestate_struct* gs){
 
 	setup_encounter(gs);
 
+	//setup heat
+	gs->shipstate.engine_heat = 1;
+
+	//setup evasion
+	gs->shipstate.evasive_action = 0;
+	
+	//setup flight state
+	gs->shipstate.curr_flight_state = FS_PASSIVE;
+	
 	//Set flow state
 	gs->curr_flow_state = FS_MAIN_GAME;
 }
