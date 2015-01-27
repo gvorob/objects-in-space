@@ -13,10 +13,9 @@ Pd 4
 
 Instructions
 ------------
-* WSAD to move
-* E to confirm, Q to go back
-* Space to use a console
-* Requires communication and a healthy dose of yelling
+* WASD to move, spacebar to enter/exit UIs (consoles)
+* In consoles, WASD to move, E to confirm, Q to go back
+* Requires 3 players together with the ability to talk to each other and cooperate
 
 Extra Instructions
 ------------------
@@ -26,12 +25,17 @@ Files
 -----
 * client.c/.h
 * consoles.c/.h
+* consoles.c/.h
 * controller.c/.h
+* effects.c/.h
+* encounter.c/.h
 * main_game.c/.h
 * main_structs.h
+* Makefile
+* ship_layout.txt
 * socket_util.c/.h
 * startup.c/.h
-* util.h
+* util.c/.h
 
 Design Docs
 -----------
@@ -42,4 +46,5 @@ How to Run
 ----------
 ./space --server
 ./space --client -ipxxx.xxx.xxx.xxx
+note - connects on port 9998
 
