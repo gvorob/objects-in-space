@@ -12,9 +12,9 @@ void effect_hit(int x, int y, struct _gamestate_struct *gs) {
 
 		temp_es.data.spark.x = x;
 		temp_es.data.spark.y = y;
-		temp_es.data.spark.vx = rand_float(-3,3);
-		temp_es.data.spark.vy = rand_float(-3,3);
-		temp_es.data.spark.ttl = rand_int(1,25);
+		temp_es.data.spark.vx = rand_float(-1,1);
+		temp_es.data.spark.vy = rand_float(-1,1);
+		temp_es.data.spark.ttl = rand_int(1,20);
 		
 
 		//create and add to LL
