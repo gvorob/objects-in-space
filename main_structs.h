@@ -117,17 +117,17 @@ typedef enum _shot_type{
 	ST_ASTEROID,
 } shot_type;
 
-typedef _shot_struct {
+typedef struct _shot_struct {
 	int target_x;
 	int target_y;
 	shot_type type;
 	int time_to_fly;
-	shot_struct *next;
-}
+  	shot_struct *next;
+} shot_struct;
 
 typedef struct _encounter_struct {
-	float enemy_location_x;
-  	float enemy_location_y;
+  	float enemy_location_x;
+	float enemy_location_y;
   	float target_x;
 	float target_y;
 	int loiter_time;
@@ -154,10 +154,10 @@ typedef enum _weapon_type {
 	WT_PLASMA
 } weapon_type;
 
-typedef weapon_struct{
+typedef struct _weapon_struct {
 	weapon_type type;
 	int time_to_charge;
-}
+} weapon_struct;
 
 //MAX_PLAYERS defined in util.h
 typedef struct _gamestate_struct { //NOT DONE YET
