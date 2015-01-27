@@ -31,6 +31,8 @@ typedef struct _effect_struct {
 void effect_hit(int x, int y, struct _gamestate_struct *gs);
 //generate fake shot from a miss
 void effect_miss(int x, int y, int dx, int dy, struct _gamestate_struct *gs);
+//make it look like the ship blew up
+void effect_game_over(struct _gamestate_struct *gs);
 
 //Mallocs, copies over, inserts into linked list
 void create_effect(effect_struct *es, struct _gamestate_struct *gs);

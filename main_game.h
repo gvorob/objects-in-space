@@ -19,5 +19,8 @@ void render_ship(int client_index, gamestate_struct* gs);
 void render_players(int client_index, gamestate_struct* gs);
 void render_consoles(int client_index, gamestate_struct* gs);
 
+void render_game_over(int client_index, gamestate_struct* gs);
+
+void do_game_over(gamestate_struct *gs);
 
 #endif

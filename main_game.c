@@ -105,6 +105,10 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 
 void update_main_game(gamestate_struct* gs) {
 
+	if(gs->shipstate.health <= 0) {
+		do_game_over(gs);
+		return;
+	}
 
 	//Update effects
 	update_effects(gs);
@@ -453,4 +457,17 @@ void render_consoles(int client_index, gamestate_struct* gs) {
 				break;
 		}
 	}
+}
+
+
+void render_game_over(int client_index, gamestate_struct* gs) {
+	char *rp = (gs->clients[client_index].render.render_data);
+	char temp_buff[999];
+		sprintf(temp_buff,"Congratulations! You lost!");
+		render_strcpy(rp + SCREEN_INDEX(GAME_OVER_LEFT, GAME_OVER_TOP), temp_buff, SCREEN_WIDTH);
+}
+
+void do_game_over(gamestate_struct *gs) {
+	effect_game_over(gs);
+	gs->curr_flow_state = FS_GAME_OVER;
 }

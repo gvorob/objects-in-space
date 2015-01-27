@@ -119,6 +119,7 @@ void update(gamestate_struct* gs) {
 			update_main_game(gs);
 			break;
 		case FS_GAME_OVER:
+			update_effects(gs);
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
@@ -144,6 +145,9 @@ void render(int client_index, gamestate_struct* gs) {
 			render_main_game(client_index, gs);
 			break;
 		case FS_GAME_OVER:
+			render_borders(client_index, gs);
+			render_effects(client_index, gs);
+			render_game_over(client_index, gs);
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");

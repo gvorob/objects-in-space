@@ -44,6 +44,33 @@ void effect_miss(int x, int y, int dx, int dy, struct _gamestate_struct *gs) {
 	create_effect(&temp_es, gs);
 }
 
+void effect_game_over(struct _gamestate_struct *gs) {
+	effect_struct temp_es;
+	int i, s;
+	int speeds[] =  { 45, 20, 5};
+
+	int x = 20;
+	int y = 20;
+	int range = 8;
+
+	for(s = 0; s < 3; s++) {
+		for(i = 0; i < 200; i++) {
+			//init shot
+			temp_es.type = ET_HIT_SPARK;
+
+			temp_es.data.spark.x = rand_int(x - range, x + range);
+			temp_es.data.spark.y = rand_int(y - range, y + range);
+			temp_es.data.spark.vx = rand_float(-1 * speeds[s],speeds[s]) / FPS;
+			temp_es.data.spark.vy = rand_float(-1 * speeds[s],speeds[s]) / FPS;
+			temp_es.data.spark.ttl = rand_int(30,120);
+			
+
+			//create and add to LL
+			create_effect(&temp_es, gs);
+		}
+	}
+}
+
 void create_effect(effect_struct *es, gamestate_struct *gs) {
 	effect_struct *new_es;
 	
