@@ -18,7 +18,7 @@ float fclamp(float x, float min, float max) {
 
 void render_strcpy(char* dest, char* src, int max_len) {
 	int len = strlen(src);
-	memcpy(dest, src, max(max_len, len));
+	memcpy(dest, src, min(max_len, len));
 }
 
 int max(int a, int b) {return a > b ? a : b;}

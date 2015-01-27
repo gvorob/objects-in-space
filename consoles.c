@@ -183,7 +183,7 @@ void render_sensors_console(
 
 	//render instructions on bottom
 	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 2),
-			"Press e to confirm; q to go back; w/s move up/down; space to exit", 
+			INSTRUCTIONS_STRING, 
 			CONSOLE_PANEL_WIDTH - 2);
 	
 	int menu_top = CONSOLE_PANEL_TOP + 2;
@@ -300,15 +300,11 @@ void init_engines_console(
 	if(ecss == NULL)
 		err(-1, "Failed to malloc in init_engines_console");
 	
-	//Init
-	int i;
-	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
-	  snprintf(ecss->states[i], 
-		   FTL_MAX_DEST_STRING, 
-		   "State: %s", 
-		   flight_state_to_string(i));
-	snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "EVASIVE ACTION");
+
+	//Set default values
 	ecss->current = 0;
+	ecss->evade_selected = 0;
+
 	//Add to gamestate
 	gs->shipstate.console_states[CI_ENGINES] = ecss;  
 };
@@ -319,9 +315,11 @@ void render_engines_console(
 		engines_console_state_struct* ecss,
 		gamestate_struct* gs) {
 	char *rp, *temp_rp;
+	char temp_buff[SCREEN_WIDTH];
 	char title_string[] = "                   Engines";
 	int i;
-	char overheat_string[] = "                    OVERHEATING";
+	int temp_x, temp_y;
+	char overheat_string[] = "OVERHEATING";
 	
 	//prepare pointers
 	rp = (gs->clients[client_index].render.render_data);
@@ -332,36 +330,114 @@ void render_engines_console(
 		      CONSOLE_PANEL_WIDTH);
 
 	//render energy bar
+	temp_x = ENGINES_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT;
+	temp_y = ENGINES_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP;
+	temp_rp = (char *)(rp + SCREEN_INDEX(temp_x, temp_y));
+
 	int energy_width = (int)((gs->shipstate.engine_heat) * (float)ENGINES_CHARGE_BAR_WIDTH + 0.5);
-  
-	temp_rp = (char *)(rp + SCREEN_INDEX(
-					     ENGINES_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
-					     ENGINES_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
 	for(i = 0; i < ENGINES_CHARGE_BAR_WIDTH; i++) {
 		temp_rp[i] = (i > energy_width) ? '-' : '+';
-  }
+	}
+
+	render_strcpy(rp + SCREEN_INDEX(temp_x + 35, temp_y - 1), 
+			"Engine Heat", 
+			CONSOLE_PANEL_WIDTH);
   
 	//overheat message
 	float new = gs->shipstate.engine_heat + 0.3;
-	if(new > 1.0f){
-	  render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, ENGINES_CHARGE_BAR_TOP + 1), 
+	if(new >= 1.0f){
+	  render_strcpy(rp + SCREEN_INDEX(temp_x + 35, temp_y + 1), 
 			overheat_string, 
 			CONSOLE_PANEL_WIDTH);
 	}
-	//Show states
+
+
+	temp_x = CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN;
+	temp_y = CONSOLE_PANEL_TOP + ENGINES_DESTS_TOP;
+
+	//Print flight mode message
+	render_strcpy(rp + 
+			SCREEN_INDEX(temp_x, temp_y),
+			"Choose trajectory type:",
+			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
+
+	temp_x += 2;
+	temp_y += 1;
+	
+	//print options
 	for(i = 0; i < ENGINES_MAX_STATES; i++) {
 	  render_strcpy(rp + 
-			SCREEN_INDEX(
-				     CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN, 
-				     CONSOLE_PANEL_TOP + ENGINES_DESTS_TOP + i * 2), 
-			ecss->states[i], 
+			SCREEN_INDEX(temp_x, temp_y + i),
+			flight_state_to_string(i),
+			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
+	}
+
+	temp_x -= 1;
+	//Show current selection
+	if(!ecss->evade_selected) {
+		rp[SCREEN_INDEX(temp_x, temp_y + ecss->current)] = '>';
+	}
+
+	//Print evade message
+	temp_x = CONSOLE_PANEL_LEFT + ENGINES_EVADE_BOX_LEFT;
+	temp_y = CONSOLE_PANEL_TOP + ENGINES_EVADE_BOX_TOP;
+	render_strcpy(rp + 
+			SCREEN_INDEX(temp_x, temp_y + 1),
+			"EVASIVE ACTION",
+			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
+	
+	//Print evade box
+	if(ecss->evade_selected) {
+		temp_rp = rp + SCREEN_INDEX(temp_x, temp_y);
+		for(i = strlen("EVASIVE ACTION") - 1; i >= 0; i--) {
+			temp_rp[i] = '#';
+			temp_rp[i + 2 * SCREEN_WIDTH] = '#';
+		}
+	}
+
+	//print current flight state
+	temp_x = CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN;
+	temp_y = CONSOLE_PANEL_TOP + ENGINES_CURR_FLIGHT_STATE_TOP;
+	strcpy(temp_buff, "Current flight mode: ");
+	strcat(temp_buff, flight_state_to_string(gs->shipstate.curr_flight_state));
+	render_strcpy(rp + 
+			SCREEN_INDEX(temp_x, temp_y),
+			temp_buff,
+			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
+
+
+	//=============================
+	//Give info on incoming shots
+	shot_struct *ssp, *first_shot;
+	first_shot = NULL;
+	int shortest_time = -1;
+	
+	//Find first shot that will hit
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ssp = ssp->next) {
+		if(ssp->next->time_to_fly < shortest_time || shortest_time == -1) {
+			shortest_time = ssp->next->time_to_fly;
+			first_shot = ssp;
+		}
+	}
+
+	//If there are any shots flying atm
+	if(shortest_time != -1 && first_shot->next->type == ST_ENEMY) {
+		//print that
+		temp_x = CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN;
+		temp_y = CONSOLE_PANEL_TOP + ENGINES_SHOT_INFO_TOP;
+		sprintf(temp_buff, "Incoming fire in %.1fs", (float)shortest_time / 30);
+		render_strcpy(rp +
+			SCREEN_INDEX(temp_x, temp_y),
+			temp_buff,
 			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
 	}
 	
-	//Show current state
-	rp[SCREEN_INDEX(
-			CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN - 1, 
-			CONSOLE_PANEL_TOP + ENGINES_DESTS_TOP + ecss->current * 2)] = '>';
+
+	//render instructions on bottom
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 1),
+			INSTRUCTIONS_STRING, 
+			CONSOLE_PANEL_WIDTH - 2);
+	
 }
 
 void update_input_engines_console(
@@ -369,28 +445,41 @@ void update_input_engines_console(
 				  int metadata,
 				  engines_console_state_struct* ecss,
 				  gamestate_struct* gs) {
-  client_input_struct* cisp;
-  cisp = &(gs->clients[client_index].curr_input_state);
+	client_input_struct* cisp;
+	cisp = &(gs->clients[client_index].curr_input_state);
   
-  if(cisp->up) {
-    ecss->current--;
-  }
-  if(cisp->down) {
-    ecss->current++;
-  }
-  ecss->current = clamp(ecss->current, 0, ENGINES_MAX_STATES - 1);
-  if(cisp->confirm){
-    if (ecss->current < 3){
-      gs->shipstate.curr_flight_state = ecss->current;
-    }
-    if (ecss->current == 3){
-      float new = gs->shipstate.engine_heat + 0.3;
-      if (new <= 1.0f){
-	gs->shipstate.evasive_action = 1;
-	gs->shipstate.engine_heat = gs->shipstate.engine_heat + 0.3;
-      }
-    }
-  }
+
+	if(ecss->evade_selected) {
+		if(cisp->left) {
+			ecss->evade_selected = 0;
+		}
+	} else {
+		if(cisp->up) {
+			ecss->current--;
+		}
+		if(cisp->down) {
+			ecss->current++;
+		}
+		if(cisp->right) {
+			ecss->evade_selected = 1;
+		}
+	}
+
+	ecss->current = clamp(ecss->current, 0, ENGINES_MAX_STATES - 1);
+
+	if(cisp->confirm) {
+		if (!ecss->evade_selected) { //If selecting a new flight mode
+			gs->shipstate.curr_flight_state = ecss->current;
+		} else { //If selectin evasive action
+
+			float new = gs->shipstate.engine_heat + 0.3;
+			if (new <= 1.0f){
+				gs->shipstate.evasive_action = 1;
+				gs->shipstate.engine_heat = gs->shipstate.engine_heat + 0.3;
+			}
+		}
+	}
+
 }
  void update_engines_console(
 			     engines_console_state_struct* ecss,

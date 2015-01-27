@@ -4,6 +4,8 @@
 #include "main_structs.h"
 #include "util.h"
 
+#define INSTRUCTIONS_STRING "Press e to confirm; q to go back; w/a/s/d move around; space to exit"
+
 #define WEAPONS_MAX_WEAP 2
 #define WEAPONS_MAX_WEAP_STRING 20
 typedef enum _weapons_console_type{
@@ -57,16 +59,21 @@ typedef struct _ftl_console_state_struct {
 }  ftl_console_state_struct;
 
 #define ENGINES_LEFT_MARGIN 3
-#define ENGINES_MAX_STATES 4
+#define ENGINES_MAX_STATES 3
 //ALWAYS 1 MORE THAN STATES
 #define ENGINES_MAX_DEST_STRING 30
 #define ENGINES_DESTS_TOP 5
 #define ENGINES_CHARGE_BAR_WIDTH ((CONSOLE_PANEL_WIDTH) - 2 * (FTL_CHARGE_BAR_LEFT))
-#define ENGINES_CHARGE_BAR_TOP ((CONSOLE_PANEL_HEIGHT) - 3)
+#define ENGINES_CHARGE_BAR_TOP ((CONSOLE_PANEL_HEIGHT) - 4)
 #define ENGINES_CHARGE_BAR_LEFT (FTL_LEFT_MARGIN)
+#define ENGINES_EVADE_BOX_TOP 5
+#define ENGINES_EVADE_BOX_LEFT 45
+#define ENGINES_CURR_FLIGHT_STATE_TOP 12
+#define ENGINES_SHOT_INFO_TOP 14
 
 typedef struct _engines_console_state_struct {
   int current;
+  int evade_selected;
   char states[ENGINES_MAX_STATES][ENGINES_MAX_DEST_STRING];
   float evasive_action; //0-1
 } engines_console_state_struct;
