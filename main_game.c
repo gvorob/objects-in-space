@@ -403,6 +403,7 @@ void setup_game(gamestate_struct* gs){
 				case 'X':
 					temp_ts.type = TT_ALT_WALL;
 					break;
+				case '|': //TEMPORARY
 				case '.':
 					temp_ts.type = TT_FLOOR;
 					break;
