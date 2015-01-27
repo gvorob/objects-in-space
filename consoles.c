@@ -11,6 +11,17 @@ void render_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	warnx("render_weapons_console not yet implemented");
+
+	char *rp;
+	char title_string[] = "                   Weapons (WIP)";
+
+	//prepare pointers
+	rp = (gs->clients[client_index].render.render_data);
+
+	//Render title
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
+			title_string, 
+			CONSOLE_PANEL_WIDTH);
 }
 
 void update_input_weapons_console(
@@ -83,6 +94,17 @@ void render_engines_console(
 		engines_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	warnx("render_engines_console not yet implemented");
+
+	char *rp;
+	char title_string[] = "                   Engines (WIP)";
+
+	//prepare pointers
+	rp = (gs->clients[client_index].render.render_data);
+
+	//Render title
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
+			title_string, 
+			CONSOLE_PANEL_WIDTH);
 }
 
 void update_input_engines_console(
@@ -159,7 +181,7 @@ void render_ftl_console(
 	char *rp, *temp_rp;
 	//int left_offset;
 	int i;
-	char message_string[] = "                   FTL Drive";
+	char title_string[] = "                   FTL Drive";
 	char charged_string[] = "                    CHARGED";
 
 	//prepare pointers
@@ -167,7 +189,7 @@ void render_ftl_console(
   
 	//Render title
 	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
-			message_string, 
+			title_string, 
 			CONSOLE_PANEL_WIDTH);
 
 	//render charge bar
