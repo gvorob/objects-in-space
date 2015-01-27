@@ -2,6 +2,28 @@
 
 int listening_sd;
 
+static char lobbyinstructions[30][100] = {
+	"This is the lobby. When enough players connect, the main game will start.",
+	"",
+	"You are the '@'. You can walk around with w, a, s, and d.",
+	"The '.'s are empty floor tiles, the '#' and '=' are wall tiles.",
+	"",
+	"Letters denote consoles, which are vital to your success",
+	"(Unfortunately, consoles don't function in the lobby)",
+	"",
+	"Consoles are how you interact with the ship's systems. If you stand on a console",
+	"and press space, you 'lock' into it and can interact with it.",
+	"In a console, you can use w/a/s/d and also e (enter) or q (quit/cancel) to",
+	"navigate its UI.",
+	"",
+	"To exit a console and resume walking around, press space again.",
+	"",
+	"In the game proper you will be part of a spaceship crew",
+	"You will need to manage weapons through the weapons console and pilot the ship using",
+	"the engines console. You'll also need a captain to man the sensors and help direct",
+	"the others."
+	};
+
 void init_server(gamestate_struct* gs){
 	/*
 	  setup_listening_socket(???)
@@ -121,6 +143,17 @@ void setup_connections_lobby(gamestate_struct* gs){
 			stsp->tiles_ptr[SHIP_TILES_INDEX(i, j, stsp)] = temp_ts;
 		}
 	}
+
+	
+	stsp->tiles_ptr[SHIP_TILES_INDEX(5,5,stsp)].type = TT_ALT_WALL;
+	stsp->tiles_ptr[SHIP_TILES_INDEX(5,6,stsp)].type = TT_ALT_WALL;
+	stsp->tiles_ptr[SHIP_TILES_INDEX(6,7,stsp)].type = TT_ALT_WALL;
+	stsp->tiles_ptr[SHIP_TILES_INDEX(7,7,stsp)].type = TT_ALT_WALL;
+
+	stsp->tiles_ptr[SHIP_TILES_INDEX(6,6,stsp)].type = TT_WEAPONS_CONSOLE;
+
+	stsp->tiles_ptr[SHIP_TILES_INDEX(15,7,stsp)].type = TT_WALL;
+	stsp->tiles_ptr[SHIP_TILES_INDEX(15,8,stsp)].type = TT_WALL;
 	
 	//players = (player_struct)malloc(sizeof(player_struct) * MAX_PLAYERS);
 	for (i = 0; i < MAX_PLAYERS; i++){
@@ -139,29 +172,41 @@ void setup_connections_lobby(gamestate_struct* gs){
 	gs.clients[client_index] contains the input from the client
  */
 void update_input_connecting(int client_index, gamestate_struct* gs) {
-	client_input_struct* cisp;
-	player_struct* psp;
+	client_input_struct *cisp;
+	player_struct *psp;
+	ship_tiles_struct *stsp;
 
 	warnx("updating input for player %d", client_index);
 	
 	cisp = &(gs->clients[client_index].curr_input_state);
 	psp = &(gs->players[client_index]);
+	stsp = &(gs->shipstate.tiles);
+
+	int tempx = psp->x;
+	int tempy = psp->y;
 
 	if(cisp->up) {
-		psp->y--;
+		tempy--;
 	}
 	if(cisp->down) {
-		psp->y++;
+		tempy++;
 	}
 	if(cisp->left) {
-		psp->x--;
+		tempx--;
 	}
 	if(cisp->right) {
-		psp->x++;
+		tempx++;
 	}
 
-	psp->x = clamp(psp->x, 0, LOBBY_WIDTH - 1); 
-	psp->y = clamp(psp->y, 0, LOBBY_HEIGHT - 1); 
+	tempx = clamp(tempx, 0, LOBBY_WIDTH - 1); 
+	tempy = clamp(tempy, 0, LOBBY_HEIGHT - 1); 
+
+	tile_struct temp_tile = stsp->tiles_ptr[SHIP_TILES_INDEX(tempx, tempy, stsp)];
+
+	if(is_walkable(temp_tile.type)) {
+		psp->x = tempx;
+		psp->y = tempy;
+	}
 }
 
 /*  
@@ -241,13 +286,37 @@ void render_connecting(int client_index, gamestate_struct* gs){
 		for(j = 0; j < LOBBY_HEIGHT; j++) {
 			tile_struct temp_ts;
 			temp_ts = stsp->tiles_ptr[SHIP_TILES_INDEX(i, j, stsp)];
-
-			if(temp_ts.type == TT_WALL) {
-				rp[SCREEN_INDEX(i,j)] = '#';
-			} else if(temp_ts.type == TT_FLOOR){
-				rp[SCREEN_INDEX(i,j)] = '.';
-			} else {
-				rp[SCREEN_INDEX(i,j)] = '?';
+			switch(temp_ts.type) {
+				case TT_SPACE:
+					rp[SCREEN_INDEX(i,j)] = ' ';
+					break;
+				case TT_FLOOR:
+					rp[SCREEN_INDEX(i,j)] = '.';
+					break;
+				case TT_WEAPONS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'W'; //temporary, just marks as console
+					break;
+				case TT_SENSORS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'S'; //temporary, just marks as console
+					break;
+				case TT_ENGINES_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'E'; //temporary, just marks as console
+					break;
+				case TT_REPAIRS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'R'; //temporary, just marks as console
+					break;
+				case TT_FTL_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'F'; //temporary, just marks as console
+					break;
+				case TT_WALL:
+					rp[SCREEN_INDEX(i,j)] = '#';
+					break;
+				case TT_ALT_WALL:
+					rp[SCREEN_INDEX(i,j)] = '=';
+					break;
+				default:
+					rp[SCREEN_INDEX(i,j)] = '?';
+					break;
 			}
 		}
 	}
@@ -261,10 +330,16 @@ void render_connecting(int client_index, gamestate_struct* gs){
 	}
 
 	sprintf(
-			rp + SCREEN_INDEX(LOBBY_WIDTH, 0), 
+			rp + SCREEN_INDEX(LOBBY_WIDTH + 2, 0), 
 			"%d/%d players connected", 
 			total_players, 
 			PLAYERS_TO_START);
+
+	for(i = 0; i < 30; i++) {
+	sprintf(
+			rp + SCREEN_INDEX(LOBBY_WIDTH + 2, 2 + i),
+			"%s", lobbyinstructions[i]);
+	}
 }
 
 /*

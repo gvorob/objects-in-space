@@ -209,7 +209,7 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 					rp[SCREEN_INDEX(i,j)] = '#';
 					break;
 				case TT_ALT_WALL:
-					rp[SCREEN_INDEX(i,j)] = 'X';
+					rp[SCREEN_INDEX(i,j)] = '=';
 					break;
 				default:
 					rp[SCREEN_INDEX(i,j)] = '?';
@@ -400,6 +400,7 @@ void setup_game(gamestate_struct* gs){
 				case '#':
 					temp_ts.type = TT_WALL;
 					break;
+				case '=':
 				case 'X':
 					temp_ts.type = TT_ALT_WALL;
 					break;

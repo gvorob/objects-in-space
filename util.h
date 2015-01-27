@@ -14,7 +14,7 @@
 #define BACKLOG 5
 
 #define MAX_PLAYERS 16
-#define PLAYERS_TO_START 1
+#define PLAYERS_TO_START 2
 
 //frame delay in nanoseconds
 #define FRAME_TIME (33 * 1000 * 1000)
