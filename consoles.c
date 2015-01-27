@@ -732,6 +732,11 @@ void render_ftl_console(
 	rp[SCREEN_INDEX(
 				CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN - 1, 
 				CONSOLE_PANEL_TOP + FTL_DESTS_TOP + fcss->current * 2)] = '>';
+
+	//render instructions on bottom
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 1),
+			INSTRUCTIONS_STRING, 
+			CONSOLE_PANEL_WIDTH - 2);
 }
 
 void setup_encounter(gamestate_struct *gs);
