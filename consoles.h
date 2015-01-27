@@ -51,7 +51,8 @@ typedef struct _ftl_console_state_struct {
 	float charge;
 }  ftl_console_state_struct;
 
-#define ENGINES_MAX_STATES 3
+#define ENGINES_MAX_STATES 4
+//always 1 more than max states
 typedef struct _engines_console_state_struct {
   float engine_heat; //pushes info to shipstate, 0-1
   flight_state curr_flight_state; //pushes info to shipstate

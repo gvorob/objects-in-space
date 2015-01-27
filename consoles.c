@@ -253,9 +253,10 @@ void init_engines_console(
 	
 	//Init
 	int i;
-	for(i = 0; i < ENGINES_MAX_STATES; i++)
+	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
 		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "Destination %c", i+65);
-	ecss->engine_heat = 0;
+	snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "Destination %c", i+65);
+	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
 
@@ -296,7 +297,7 @@ void render_engines_console(
 				overheat_string, 
 				CONSOLE_PANEL_WIDTH);
 	
-	//Show destinations
+	//Show states
 	for(i = 0; i < ENGINES_MAX_STATES; i++) {
 	  render_strcpy(rp + 
 			SCREEN_INDEX(
@@ -306,7 +307,7 @@ void render_engines_console(
 			CONSOLE_PANEL_WIDTH - FTL_LEFT_MARGIN);
 	}
 	
-	//Show current destination
+	//Show current state
 	rp[SCREEN_INDEX(
 			CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN - 1, 
 			CONSOLE_PANEL_TOP + FTL_DESTS_TOP + ecss->current * 2)] = '>';
@@ -326,7 +327,7 @@ void update_input_engines_console(
     ecss->current++;
   }
   
-  ecss->current = clamp(ecss->current, 0, FTL_MAX_DESTS - 1);
+  ecss->current = clamp(ecss->current, 0, ENGINES_MAX_STATES - 1);
   //warnx("update_input_engines_console not yet implemented");
 }
 
@@ -335,6 +336,10 @@ void update_engines_console(
 			    gamestate_struct* gs) {
   gs->shipstate.engine_heat = ecss->engine_heat;
   gs->shipstate.curr_flight_state = ecss->curr_flight_state;
+
+  int time_to_cool = secs_to_frames(10);
+  float cool_per_frame = (float)(1 / (float)time_to_cool);
+  ecss->engine_heat = fclamp((ecss->engine_heat)-(cool_per_frame), 0, 1);
   //warnx("update_engines_console not yet implemented");
 }
 //==========================
