@@ -27,3 +27,15 @@ int min(int a, int b) {return a < b ? a : b;}
 int secs_to_frames(float s) {
 	return (int)(s * 33.0f);
 }
+
+int rand_int(int min, int max) { //inclusive
+	return (rand() % (max - min + 1)) + min;
+}
+
+float rand_float(float min, float max) {
+	return min + (((float)rand() / (float)RAND_MAX) * (max - min));
+}
+
+float euclid_dist(float x, float y) {
+	return sqrtf(x * x + y * y);
+}

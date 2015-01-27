@@ -99,6 +99,9 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 void update_main_game(gamestate_struct* gs) {
 	warnx("update_main_game not yet implemented");
 
+	//update enemy
+	encounter_move_enemy(gs);
+
 	//delegate to consoles as well
 	update_sensors_console(
 			(sensors_console_state_struct *) gs->shipstate.console_states[CI_SENSORS],
@@ -246,9 +249,17 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	char temp_buff[999];
 	sprintf(temp_buff,"is_at_console:%d", ps.is_at_console);
 	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP), temp_buff, SCREEN_WIDTH);
-	sprintf(temp_buff,"fcss->charge:%f", 
-			((ftl_console_state_struct*)gs->shipstate.console_states[CI_FTL])->charge);
+	sprintf(temp_buff,"enemy_location: %f, %f", 
+			gs->encounter.enemy_location_x,
+			gs->encounter.enemy_location_y);
 	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP + 1), temp_buff, SCREEN_WIDTH);
+	sprintf(temp_buff,"enemy target: %f, %f", 
+			gs->encounter.target_x,
+			gs->encounter.target_y);
+	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP + 2), temp_buff, SCREEN_WIDTH);
+	sprintf(temp_buff,"enemy loiter_time: %d", 
+			gs->encounter.loiter_time);
+	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP + 3), temp_buff, SCREEN_WIDTH);
 	
 	//Mark bottom right corner
 	rp[SCREEN_INDEX(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)] = '/';
@@ -352,6 +363,9 @@ void setup_game(gamestate_struct* gs){
 		}
 	}
 
+	setup_encounter(gs);
+
 	//Set flow state
 	gs->curr_flow_state = FS_MAIN_GAME;
 }
+

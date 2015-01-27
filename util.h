@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <time.h>
+#include <math.h>
 #include <string.h>
 
 #define DEFAULT_PORT "9998"
@@ -51,6 +52,7 @@
 #define LOBBY_WIDTH 20
 #define LOBBY_HEIGHT 20
 
+
 //returns x if x is within the bounds
 //otherwise returns the bound itself
 int clamp(int x, int min, int max);
@@ -65,5 +67,12 @@ int min(int a, int b);
 
 //Turns a float time in seconds into frames
 int secs_to_frames(float s);
+
+//rands
+int rand_int(int min, int max); //inclusive
+float rand_float(float min, float max);
+
+//euclidean distance
+float euclid_dist(float x, float y);
 
 #endif
