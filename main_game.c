@@ -54,38 +54,45 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 		}
 	} else { //Otherwise, delegate to the appropriate console
 		tile_struct temp;
+		int metadata;
 		void* csp; //console state pointer
 
 		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(psp->x, psp->y, stsp)];
 		csp = temp.console_state_ptr;
+		metadata = temp.metadata;
 		switch(temp.type) {
 			case TT_WEAPONS_CONSOLE:
 				update_input_weapons_console(
 						client_index, 
+						metadata,
 						(weapons_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_SENSORS_CONSOLE:
 				update_input_sensors_console(
 						client_index, 
+						metadata,
 						(sensors_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_ENGINES_CONSOLE:
 				update_input_engines_console(
 						client_index, 
+						metadata,
 						(engines_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_FTL_CONSOLE:
 				update_input_ftl_console(
 						client_index, 
+						metadata,
 						(ftl_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_REPAIRS_CONSOLE:
 				update_input_repairs_console(
 						client_index, 
+						metadata,
 						(repairs_console_state_struct*) csp,
 						gs);
 				break;			
@@ -204,38 +211,45 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	ps = gs->players[client_index];
 	if(ps.is_at_console) {
 		tile_struct temp;
+		int metadata;
 		void* csp; //console state pointer
 
 		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(ps.x, ps.y, stsp)];
 		csp = temp.console_state_ptr;
+		metadata = temp.metadata;
 		switch(temp.type) {
 			case TT_WEAPONS_CONSOLE:
 				render_weapons_console(
 						client_index, 
+						metadata,
 						(weapons_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_SENSORS_CONSOLE:
 				render_sensors_console(
 						client_index, 
+						metadata,
 						(sensors_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_ENGINES_CONSOLE:
 				render_engines_console(
 						client_index, 
+						metadata,
 						(engines_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_FTL_CONSOLE:
 				render_ftl_console(
 						client_index, 
+						metadata,
 						(ftl_console_state_struct*) csp,
 						gs);
 				break;			
 			case TT_REPAIRS_CONSOLE:
 				render_repairs_console(
 						client_index, 
+						metadata,
 						(repairs_console_state_struct*) csp,
 						gs);
 				break;			
@@ -343,6 +357,8 @@ void setup_game(gamestate_struct* gs){
 					temp_ts.type = TT_ENGINES_CONSOLE;
 					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_ENGINES];
 					break;
+				case 'A':
+					temp_ts.metadata = 1;
 				case 'W':
 					temp_ts.type = TT_WEAPONS_CONSOLE;
 					temp_ts.console_state_ptr = gs->shipstate.console_states[CI_WEAPONS];
