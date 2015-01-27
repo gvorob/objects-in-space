@@ -60,10 +60,7 @@ typedef struct _ftl_console_state_struct {
 #define ENGINES_CHARGE_BAR_TOP ((CONSOLE_PANEL_HEIGHT) - 3)
 #define ENGINES_CHARGE_BAR_LEFT (FTL_LEFT_MARGIN)
 
-//always 1 more than max states
 typedef struct _engines_console_state_struct {
-  float engine_heat; //pushes info to shipstate, 0-1
-  flight_state curr_flight_state; //pushes info to shipstate
   int current;
   char states[ENGINES_MAX_STATES][ENGINES_MAX_DEST_STRING];
   float evasive_action; //0-1
