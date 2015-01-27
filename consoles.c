@@ -249,7 +249,7 @@ void init_engines_console(
 			flight_state_to_string(i));
 		*/
 		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "State %c", i+65);
-	snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);
+	//snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);//this one was segfaulting
 	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
