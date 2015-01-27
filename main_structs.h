@@ -57,14 +57,14 @@ typedef enum _tile_type {
 } tile_type;
 
 typedef struct _tile_struct {
-  tile_type type;
-  void* console_state_ptr;
+	tile_type type;
+  	void* console_state_ptr;
 } tile_struct;
 
 typedef struct _ship_tiles_struct {
-  int width;
-  int height;
-  tile_struct* tiles_ptr;
+	int width;
+  	int height;
+  	tile_struct* tiles_ptr;
 } ship_tiles_struct;
 #define SHIP_TILES_INDEX(x, y, stsp) ((x) + (y) * (stsp)->width)
 
@@ -75,19 +75,31 @@ typedef enum _console_index {
 	CI_FTL,
 } console_index;
 
+typedef enum _flight_state {
+  	FS_PASSIVE,
+	FS_CHASING,
+	FS_STABLE
+} flight_state;
+
 typedef struct _shipstate_struct {
-  //all console states
-  //e.g.:
-  void *console_states[MAX_CONSOLES];
-  /*
-    malloc a bunch of <...>_console_state_struct-s and fill it in
-    null pointers would be ignored
-  */
-  //tiles would point to these with void *’s
-  //which we then cast to the right type
-  //based on what the console type is (also from the tile)
+	//all console states
+	//e.g.:
+	void *console_states[MAX_CONSOLES];
+ 	/*
+	  malloc a bunch of <...>_console_state_struct-s and fill it in
+	  null pointers would be ignored
+	*/
+	//tiles would point to these with void *’s
+	//which we then cast to the right type
+	//based on what the console type is (also from the tile)
   
-  ship_tiles_struct tiles;
+  	ship_tiles_struct tiles;
+  	flight_state curr_flight_state;
+  	float engine_heat; //0-1
+  	weapon_struct weapons[2];
+  	float aim_x, aim_y;
+  	int health; //0-20
+  	float ftl_charge; //0-1
 } shipstate_struct;
 
 typedef enum _flow_state {
@@ -95,12 +107,52 @@ typedef enum _flow_state {
 	FS_CONNECTING
 } flow_state;
 
+typedef enum _shot_type{
+	ST_ENEMY,
+	ST_ASTEROID,
+} shot_type;
+
+typedef _shot_struct {
+	int target_x;
+	int target_y;
+	shot_type type;
+	int time_to_fly;
+	shot_struct *next;
+}
+
 typedef struct _encounter_struct {
-  	int enemy_location_x;
-  	int enemy_location_y;
+	float enemy_location_x;
+  	float enemy_location_y;
+  	float target_x;
+	float target_y;
+	int loiter_time;
+	int fire_delay;
+	shot_struct shots_list;
+
+  	//firing window stuff
+  	int time_to_firing_window;
+  	int firing_window_duration;
+
+  	//WHICH FLIGHT STATE SHOULD WE BE IN
+  	flight_state firing_window_requirement; 
+
+	int time_to_asteroid;
   	int enemy_max_health;
   	int enemy_health;
 } encounter_struct;
+
+typedef enum _weapon_type {
+	//lasers,missiles,flak,plasma,etc...
+  	WT_LASER,
+	WT_MISSILE,
+	WT_FLAK,
+	WT_PLASMA
+} weapon_type;
+
+typedef weapon_struct{
+	weapon_type type;
+	int time_to_charge;
+}
 
 //MAX_PLAYERS defined in util.h
 typedef struct _gamestate_struct { //NOT DONE YET
