@@ -20,14 +20,14 @@
 
 
 //SCREEN WIDTH/HEIGHT TBD
-#define SCREEN_WIDTH 90
-#define SCREEN_HEIGHT 30
+#define SCREEN_WIDTH 132
+#define SCREEN_HEIGHT 43
 
 #define SHIP_FILE "ship_layout.txt"
 
 //Coordinates are inclusive/exclusive, like array indices
 #define SHIP_PANEL_LEFT 0
-#define SHIP_PANEL_RIGHT ((SCREEN_WIDTH)/2)
+#define SHIP_PANEL_RIGHT 45
 #define SHIP_PANEL_WIDTH ((SHIP_PANEL_RIGHT) - (SHIP_PANEL_LEFT))
 #define SHIP_PANEL_TOP 0
 #define SHIP_PANEL_BOTTOM SCREEN_HEIGHT-5
