@@ -51,7 +51,14 @@ typedef struct _ftl_console_state_struct {
 	float charge;
 }  ftl_console_state_struct;
 
-#define ENGINES_MAX_STATES 4
+#define ENGINES_LEFT_MARGIN 3
+#define ENGINES_MAX_DESTS 3
+#define ENGINES_MAX_DEST_STRING 30
+#define ENGINES_DESTS_TOP 5
+#define ENGINES_CHARGE_BAR_WIDTH ((CONSOLE_PANEL_WIDTH) - 2 * (FTL_CHARGE_BAR_LEFT))
+#define ENGINES_CHARGE_BAR_TOP ((CONSOLE_PANEL_HEIGHT) - 3)
+#define ENGINES_CHARGE_BAR_LEFT (FTL_LEFT_MARGIN)
+
 //always 1 more than max states
 typedef struct _engines_console_state_struct {
   float engine_heat; //pushes info to shipstate, 0-1

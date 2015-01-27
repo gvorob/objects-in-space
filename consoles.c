@@ -254,8 +254,8 @@ void init_engines_console(
 	//Init
 	int i;
 	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
-		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "State %c", i+65);
-	snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);
+		snprintf(ecss->states[i], ENGINES_MAX_DEST_STRING, "State %c", i+65);
+	snprintf(ecss->states[i+1], ENGINES_MAX_DEST_STRING, "State %c", i+65);
 	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
@@ -282,18 +282,18 @@ void render_engines_console(
 		      CONSOLE_PANEL_WIDTH);
 
 	//render energy bar
-	int energy_width = (int)((ecss->engine_heat) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
+	int energy_width = (int)((ecss->engine_heat) * (float)ENGINES_CHARGE_BAR_WIDTH + 0.5);
   
 	temp_rp = (char *)(rp + SCREEN_INDEX(
-					     FTL_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
-					     FTL_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
-	for(i = 0; i < FTL_CHARGE_BAR_WIDTH; i++) {
+					     ENGINES_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
+					     ENGINES_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
+	for(i = 0; i < ENGINES_CHARGE_BAR_WIDTH; i++) {
 		temp_rp[i] = (i > energy_width) ? '-' : '+';
   }
   
 	//overheat message
 	if(ecss->engine_heat >= 1.0f)
-	  		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, FTL_CHARGE_BAR_TOP + 1), 
+	  		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, ENGINES_CHARGE_BAR_TOP + 1), 
 				overheat_string, 
 				CONSOLE_PANEL_WIDTH);
 	
@@ -301,16 +301,16 @@ void render_engines_console(
 	for(i = 0; i < ENGINES_MAX_STATES; i++) {
 	  render_strcpy(rp + 
 			SCREEN_INDEX(
-				     CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN, 
-				     CONSOLE_PANEL_TOP + FTL_DESTS_TOP + i * 2), 
+				     CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN, 
+				     CONSOLE_PANEL_TOP + ENGINES_DESTS_TOP + i * 2), 
 			ecss->states[i], 
-			CONSOLE_PANEL_WIDTH - FTL_LEFT_MARGIN);
+			CONSOLE_PANEL_WIDTH - ENGINES_LEFT_MARGIN);
 	}
 	
 	//Show current state
 	rp[SCREEN_INDEX(
-			CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN - 1, 
-			CONSOLE_PANEL_TOP + FTL_DESTS_TOP + ecss->current * 2)] = '>';
+			CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN - 1, 
+			CONSOLE_PANEL_TOP + ENGINES_DESTS_TOP + ecss->current * 2)] = '>';
 }
 
 void update_input_engines_console(
