@@ -10,6 +10,7 @@
 #define CONSOLE_LOCK ' '
 
 #include "util.h"
+#include "effects.h"
 //for defines
 
 typedef struct _client_input_struct {
@@ -180,6 +181,7 @@ typedef struct _gamestate_struct { //NOT DONE YET
 	client_struct clients[MAX_PLAYERS];
 	//if clients[i].socket_d == -1, not connected
   	encounter_struct encounter;
+	effect_struct effects_list;
 } gamestate_struct;
 
 //tile checks
