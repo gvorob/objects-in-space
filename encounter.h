@@ -1,3 +1,6 @@
+#ifndef ENCOUNTER_H
+#define ENCOUNTER_H
+
 #include "main_structs.h"
 #include "util.h"
 
@@ -42,3 +45,5 @@ void create_shot(shot_struct *ss, gamestate_struct *gs);
 
 //Picks a random tile of the ship, and puts its coords into *result_x and y
 void pick_target_on_ship(int *result_x, int *result_y, gamestate_struct *gs);
+
+#endif

@@ -105,7 +105,9 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 
 void update_main_game(gamestate_struct* gs) {
 	shot_struct *ssp;
-	//update shots
+
+	//=======================
+	//Update Shots
 		//walk the LL
 	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ) {
 		ssp->next->time_to_fly--;
@@ -114,6 +116,7 @@ void update_main_game(gamestate_struct* gs) {
 		if(!ssp->next->time_to_fly) {
 			//deal damage
 			gs->shipstate.health--;
+			effect_hit(ssp->next->target_x, ssp->next->target_y, gs);
 			//delete the shot
 			ssp->next = ssp->next->next;
 
@@ -122,6 +125,9 @@ void update_main_game(gamestate_struct* gs) {
 			ssp = ssp->next;
 		}
 	}
+
+	//Update effects
+	update_effects(gs);
 
 	//Update ftl charge
 		//Has to charge in 20 seconds
@@ -254,6 +260,9 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 		}
 	}
 
+	//Delegate rendering to effects
+	render_effects(client_index, gs);
+
 	//Delegate rendering to consoles (if applicable)
 	ps = gs->players[client_index];
 	if(ps.is_at_console) {
@@ -337,6 +346,9 @@ void setup_game(gamestate_struct* gs){
 	char* temp_buff;
 
 	stsp = &(gs->shipstate.tiles);
+
+	//Initialize effects list
+	gs->effects_list.next = NULL;
 
 	//initialize ship stats
 	gs->shipstate.health = SHIP_MAX_HEALTH; 
