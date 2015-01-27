@@ -254,8 +254,8 @@ void init_engines_console(
 	//Init
 	int i;
 	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
-		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "Destination %c", i+65);
-	snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "Destination %c", i+65);
+		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "State %c", i+65);
+	snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);
 	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
