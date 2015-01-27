@@ -43,8 +43,8 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 			tempx++;
 		}
 
-		tempx = clamp(tempx, 0, LOBBY_WIDTH - 1); 
-		tempy = clamp(tempy, 0, LOBBY_HEIGHT - 1); 
+		tempx = clamp(tempx, 0, stsp->width - 1); 
+		tempy = clamp(tempy, 0, stsp->height - 1); 
 
 		temp_tile = stsp->tiles_ptr[SHIP_TILES_INDEX(tempx, tempy, stsp)];
 
