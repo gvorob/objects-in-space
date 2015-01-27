@@ -14,5 +14,10 @@ void update_main_game(gamestate_struct* gs);
 void render_main_game(int client_index, gamestate_struct* gs);
 void setup_game(gamestate_struct* gs);
 
+void render_borders(int client_index, gamestate_struct* gs);
+void render_ship(int client_index, gamestate_struct* gs);
+void render_players(int client_index, gamestate_struct* gs);
+void render_consoles(int client_index, gamestate_struct* gs);
+
 
 #endif

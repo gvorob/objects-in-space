@@ -104,44 +104,13 @@ void update_input_main_game(int client_index, gamestate_struct* gs) {
 }
 
 void update_main_game(gamestate_struct* gs) {
-	shot_struct *ssp;
 
-	//=======================
-	//Update Shots
-		//walk the LL
-	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ) {
-		ssp->next->time_to_fly--;
-
-		//if hit
-		if(!ssp->next->time_to_fly) {
-			shot_struct s = *(ssp->next);
-			
-			if(gs->shipstate.evasive_action <= 0.0f) {
-				//deal damage
-				gs->shipstate.health--;
-				effect_hit(s.target_x, s.target_y, gs);
-			} else {
-				effect_miss(s.target_x, s.target_y, s.target_x - s.entry_x, s.target_y - s.entry_y, gs);
-				//miss
-				
-			}
-			//delete the shot
-			ssp->next = ssp->next->next;
-
-		} else {
-			//Walk the list manually so that we can delete things as we go
-			ssp = ssp->next;
-		}
-	}
 
 	//Update effects
 	update_effects(gs);
 
-	//Update ftl charge
-		//Has to charge in 20 seconds
-		//20 * 30 = 600 frams
-	gs->shipstate.ftl_charge = 
-			fclamp(gs->shipstate.ftl_charge + 1.0f/secs_to_frames(SHIP_FTL_CHARGE_TIME), 0, 1);
+	//Update shots
+	update_shots(gs);
 
 	//update enemy
 	encounter_move_enemy(gs);
@@ -161,6 +130,12 @@ void update_main_game(gamestate_struct* gs) {
 			(ftl_console_state_struct *) gs->shipstate.console_states[CI_FTL],
 			gs);
 
+	//Update ftl charge
+		//Has to charge in 20 seconds
+		//20 * 30 = 600 frams
+	gs->shipstate.ftl_charge = 
+			fclamp(gs->shipstate.ftl_charge + 1.0f/secs_to_frames(SHIP_FTL_CHARGE_TIME), 0, 1);
+
 	//update evasion
 	int evasion = secs_to_frames(ENGINES_EVADE_DURATION);
 	float down_per_frame = (float)(1 / (float)evasion);
@@ -172,156 +147,17 @@ void update_main_game(gamestate_struct* gs) {
 	gs->shipstate.engine_heat = fclamp((gs->shipstate.engine_heat)-(cool_per_frame), 0, 1);
 }
 
+
 void render_main_game(int client_index, gamestate_struct* gs) {
-	char* rp; //render pointer
-	ship_tiles_struct* stsp;
-	player_struct ps;
-	int i, j;
-	int total_players = 0;
-
-	//Prepare pointers
-	rp = (gs->clients[client_index].render.render_data);
-	stsp = &(gs->shipstate.tiles);
-
-	//Draw crossbars
-	for(j = 0; j < SHIP_PANEL_BOTTOM; j++) {
-			rp[SCREEN_INDEX(SHIP_PANEL_RIGHT,j)] = '|';
-	}
-	for(i = 0; i < SCREEN_WIDTH; i++) {
-			rp[SCREEN_INDEX(i, SHIP_PANEL_BOTTOM)] = '=';
-	}
-
-	//Render Ship
-	for(i = 0; i < stsp->width; i++) {
-		for(j = 0; j < stsp->height; j++) {
-			tile_struct temp_ts;
-			temp_ts = stsp->tiles_ptr[SHIP_TILES_INDEX(i, j, stsp)];
-
-			switch(temp_ts.type) {
-				case TT_SPACE:
-					rp[SCREEN_INDEX(i,j)] = ' ';
-					break;
-				case TT_FLOOR:
-					rp[SCREEN_INDEX(i,j)] = '.';
-					break;
-				case TT_WEAPONS_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'W'; //temporary, just marks as console
-					break;
-				case TT_SENSORS_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'S'; //temporary, just marks as console
-					break;
-				case TT_ENGINES_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'E'; //temporary, just marks as console
-					break;
-				case TT_REPAIRS_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'R'; //temporary, just marks as console
-					break;
-				case TT_FTL_CONSOLE:
-					rp[SCREEN_INDEX(i,j)] = 'F'; //temporary, just marks as console
-					break;
-				case TT_WALL:
-					rp[SCREEN_INDEX(i,j)] = '#';
-					break;
-				case TT_ALT_WALL:
-					rp[SCREEN_INDEX(i,j)] = '=';
-					break;
-				default:
-					rp[SCREEN_INDEX(i,j)] = '?';
-					break;
-			}
-		}
-	}
-
-	//Draw in players
-	for(i = 0; i < MAX_PLAYERS; i++) {
-		ps = gs->players[i];
-		if(ps.is_connected) {
-			rp[SCREEN_INDEX(ps.x, ps.y)] = '@';
-			total_players++;
-		}
-	}
-
-	//Draw in laser shots
-	shot_struct *ssp;
-
-	//walk the LL
-	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ssp = ssp->next) {
-		int temp_x, temp_y;
-		shot_struct *temp_ssp = ssp->next;
-
-		//If shot is onscreen
-		if(temp_ssp->time_to_fly < temp_ssp->entry_time) {
-			//goes from 1 -> 0 as shot approaches target from edge of screen
-			float rev_percent_of_trip = ((float)temp_ssp->time_to_fly / (float)temp_ssp->entry_time);
-
-			temp_x = temp_ssp->target_x + 
-					(int)(rev_percent_of_trip * (temp_ssp->entry_x - temp_ssp->target_x));
-			temp_y = temp_ssp->target_y + 
-					(int)(rev_percent_of_trip * (temp_ssp->entry_y - temp_ssp->target_y));
-
-			if(temp_x != clamp(temp_x, 0, SCREEN_WIDTH))
-				err(-1, "WOOPX %d %f", temp_x, rev_percent_of_trip);
-			if(temp_y != clamp(temp_y, 0, SCREEN_HEIGHT))
-				err(-1, "WOOPY %d %f", temp_y, rev_percent_of_trip);
-
-			rp[SCREEN_INDEX(temp_x, temp_y)] = '+';
-		}
-	}
-
-	//Delegate rendering to effects
+	render_borders(client_index, gs);
+	render_ship(client_index, gs);
+	render_players(client_index, gs);
+	render_shots(client_index, gs);
 	render_effects(client_index, gs);
+	render_consoles(client_index, gs);
 
-	//Delegate rendering to consoles (if applicable)
-	ps = gs->players[client_index];
-	if(ps.is_at_console) {
-		tile_struct temp;
-		int metadata;
-		void* csp; //console state pointer
-
-		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(ps.x, ps.y, stsp)];
-		csp = temp.console_state_ptr;
-		metadata = temp.metadata;
-		switch(temp.type) {
-			case TT_WEAPONS_CONSOLE:
-				render_weapons_console(
-						client_index, 
-						metadata,
-						(weapons_console_state_struct*) csp,
-						gs);
-				break;			
-			case TT_SENSORS_CONSOLE:
-				render_sensors_console(
-						client_index, 
-						metadata,
-						(sensors_console_state_struct*) csp,
-						gs);
-				break;			
-			case TT_ENGINES_CONSOLE:
-				render_engines_console(
-						client_index, 
-						metadata,
-						(engines_console_state_struct*) csp,
-						gs);
-				break;			
-			case TT_FTL_CONSOLE:
-				render_ftl_console(
-						client_index, 
-						metadata,
-						(ftl_console_state_struct*) csp,
-						gs);
-				break;			
-			case TT_REPAIRS_CONSOLE:
-				render_repairs_console(
-						client_index, 
-						metadata,
-						(repairs_console_state_struct*) csp,
-						gs);
-				break;			
-			default:
-				warnx("Is at console but isn't at console. ???");
-				break;
-		}
-	}
+	char *rp = (gs->clients[client_index].render.render_data);
+	player_struct ps;
 
 	//DEBUGGING
 	char temp_buff[999];
@@ -480,3 +316,141 @@ void setup_game(gamestate_struct* gs){
 	gs->curr_flow_state = FS_MAIN_GAME;
 }
 
+void render_borders(int client_index, gamestate_struct* gs) {
+	char* rp = (gs->clients[client_index].render.render_data);
+	int i, j;
+
+	for(j = 0; j < SHIP_PANEL_BOTTOM; j++) {
+			rp[SCREEN_INDEX(SHIP_PANEL_RIGHT,j)] = '|';
+	}
+	for(i = 0; i < SCREEN_WIDTH; i++) {
+			rp[SCREEN_INDEX(i, SHIP_PANEL_BOTTOM)] = '=';
+	}
+}
+void render_ship(int client_index, gamestate_struct* gs) {
+	char* rp; //render pointer
+	ship_tiles_struct* stsp;
+	int i, j;
+
+	//Prepare pointers
+	rp = (gs->clients[client_index].render.render_data);
+	stsp = &(gs->shipstate.tiles);
+
+	for(i = 0; i < stsp->width; i++) {
+		for(j = 0; j < stsp->height; j++) {
+			tile_struct temp_ts;
+			temp_ts = stsp->tiles_ptr[SHIP_TILES_INDEX(i, j, stsp)];
+
+			switch(temp_ts.type) {
+				case TT_SPACE:
+					rp[SCREEN_INDEX(i,j)] = ' ';
+					break;
+				case TT_FLOOR:
+					rp[SCREEN_INDEX(i,j)] = '.';
+					break;
+				case TT_WEAPONS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'W'; //temporary, just marks as console
+					break;
+				case TT_SENSORS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'S'; //temporary, just marks as console
+					break;
+				case TT_ENGINES_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'E'; //temporary, just marks as console
+					break;
+				case TT_REPAIRS_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'R'; //temporary, just marks as console
+					break;
+				case TT_FTL_CONSOLE:
+					rp[SCREEN_INDEX(i,j)] = 'F'; //temporary, just marks as console
+					break;
+				case TT_WALL:
+					rp[SCREEN_INDEX(i,j)] = '#';
+					break;
+				case TT_ALT_WALL:
+					rp[SCREEN_INDEX(i,j)] = '=';
+					break;
+				default:
+					rp[SCREEN_INDEX(i,j)] = '?';
+					break;
+			}
+		}
+	}
+}
+
+void render_players(int client_index, gamestate_struct* gs) {
+	char* rp; //render pointer
+	player_struct ps;
+	int i;
+	int total_players = 0;
+
+	//Prepare pointers
+	rp = (gs->clients[client_index].render.render_data);
+
+	for(i = 0; i < MAX_PLAYERS; i++) {
+		ps = gs->players[i];
+		if(ps.is_connected) {
+			rp[SCREEN_INDEX(ps.x, ps.y)] = '@';
+			total_players++;
+		}
+	}
+}
+
+void render_consoles(int client_index, gamestate_struct* gs) {
+	ship_tiles_struct* stsp;
+	player_struct ps;
+
+	//Prepare pointers
+	stsp = &(gs->shipstate.tiles);
+
+	//Delegate rendering to consoles (if applicable)
+	ps = gs->players[client_index];
+	if(ps.is_at_console) {
+		tile_struct temp;
+		int metadata;
+		void* csp; //console state pointer
+
+		temp = stsp->tiles_ptr[SHIP_TILES_INDEX(ps.x, ps.y, stsp)];
+		csp = temp.console_state_ptr;
+		metadata = temp.metadata;
+		switch(temp.type) {
+			case TT_WEAPONS_CONSOLE:
+				render_weapons_console(
+						client_index, 
+						metadata,
+						(weapons_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_SENSORS_CONSOLE:
+				render_sensors_console(
+						client_index, 
+						metadata,
+						(sensors_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_ENGINES_CONSOLE:
+				render_engines_console(
+						client_index, 
+						metadata,
+						(engines_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_FTL_CONSOLE:
+				render_ftl_console(
+						client_index, 
+						metadata,
+						(ftl_console_state_struct*) csp,
+						gs);
+				break;			
+			case TT_REPAIRS_CONSOLE:
+				render_repairs_console(
+						client_index, 
+						metadata,
+						(repairs_console_state_struct*) csp,
+						gs);
+				break;			
+			default:
+				warnx("Is at console but isn't at console. ???");
+				break;
+		}
+	}
+}

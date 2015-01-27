@@ -100,6 +100,8 @@ void update_input(int client_index, gamestate_struct* gs) {
 		case FS_MAIN_GAME:
 			update_input_main_game(client_index, gs);
 			break;
+		case FS_GAME_OVER:
+			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
 			break;
@@ -115,6 +117,8 @@ void update(gamestate_struct* gs) {
 			break;
 		case FS_MAIN_GAME:
 			update_main_game(gs);
+			break;
+		case FS_GAME_OVER:
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");
@@ -138,6 +142,8 @@ void render(int client_index, gamestate_struct* gs) {
 			break;
 		case FS_MAIN_GAME:
 			render_main_game(client_index, gs);
+			break;
+		case FS_GAME_OVER:
 			break;
 		default:
 			err(-1, "UNIMPLEMENTED FLOWSTATE");

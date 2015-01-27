@@ -28,6 +28,68 @@ void cleanup_encounter(gamestate_struct* gs) {
 	warnx("cleanup_encounter not yet implemented");
 }
 
+void update_shots(gamestate_struct* gs) {
+	//=======================
+	//Update Shots
+		//walk the LL
+	shot_struct *ssp;
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ) {
+		ssp->next->time_to_fly--;
+
+		//if hit
+		if(!ssp->next->time_to_fly) {
+			shot_struct s = *(ssp->next);
+			
+			if(gs->shipstate.evasive_action <= 0.0f) {
+				//deal damage
+				gs->shipstate.health--;
+				effect_hit(s.target_x, s.target_y, gs);
+			} else {
+				effect_miss(s.target_x, s.target_y, s.target_x - s.entry_x, s.target_y - s.entry_y, gs);
+				//miss
+				
+			}
+			//delete the shot
+			ssp->next = ssp->next->next;
+
+		} else {
+			//Walk the list manually so that we can delete things as we go
+			ssp = ssp->next;
+		}
+	}
+}
+
+void render_shots(int client_index, gamestate_struct* gs){
+	char* rp; //render pointer
+	shot_struct *ssp;
+
+	rp = (gs->clients[client_index].render.render_data);
+
+	//walk the LL
+	for(ssp = &(gs->encounter.shots_list); ssp->next != NULL; ssp = ssp->next) {
+		int temp_x, temp_y;
+		shot_struct *temp_ssp = ssp->next;
+
+		//If shot is onscreen
+		if(temp_ssp->time_to_fly < temp_ssp->entry_time) {
+			//goes from 1 -> 0 as shot approaches target from edge of screen
+			float rev_percent_of_trip = ((float)temp_ssp->time_to_fly / (float)temp_ssp->entry_time);
+
+			temp_x = temp_ssp->target_x + 
+					(int)(rev_percent_of_trip * (temp_ssp->entry_x - temp_ssp->target_x));
+			temp_y = temp_ssp->target_y + 
+					(int)(rev_percent_of_trip * (temp_ssp->entry_y - temp_ssp->target_y));
+
+			if(temp_x != clamp(temp_x, 0, SCREEN_WIDTH))
+				err(-1, "WOOPX %d %f", temp_x, rev_percent_of_trip);
+			if(temp_y != clamp(temp_y, 0, SCREEN_HEIGHT))
+				err(-1, "WOOPY %d %f", temp_y, rev_percent_of_trip);
+
+			rp[SCREEN_INDEX(temp_x, temp_y)] = '+';
+		}
+	}
+}
+
 void encounter_reset_fire_delay(gamestate_struct *gs) {
 	gs->encounter.fire_delay = rand_int(
 			secs_to_frames(ENC_MIN_FIRE_DELAY), 

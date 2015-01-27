@@ -132,7 +132,8 @@ typedef struct _shipstate_struct {
 
 typedef enum _flow_state {
 	FS_MAIN_GAME,
-	FS_CONNECTING
+	FS_CONNECTING,
+	FS_GAME_OVER
 } flow_state;
 
 typedef enum _shot_type{

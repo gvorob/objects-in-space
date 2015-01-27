@@ -25,6 +25,9 @@
 void setup_encounter(gamestate_struct *gs);
 void cleanup_encounter(gamestate_struct *gs);
 
+void update_shots(gamestate_struct* gs);
+void render_shots(int client_index, gamestate_struct* gs);
+
 void encounter_reset_fire_delay(gamestate_struct *gs);
 void encounter_reset_enemy_health(gamestate_struct *gs);
 void encounter_reset_loiter_time(gamestate_struct *gs);
