@@ -1,2 +1,2 @@
 all:
-	gcc -Wall *.c -lncurses -o space
+	gcc -Wall *.c -lm -lncurses -o space

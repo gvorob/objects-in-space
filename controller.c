@@ -5,7 +5,10 @@ int main(int argc, char *argv[]) {
 	char* ip_string;
 	gamestate_struct gs;
 	
+	//seed rand
+	srand(time(NULL));
 
+	//handle command line
 	if(argc != 3 && argc != 2)
 		print_usage();
 
