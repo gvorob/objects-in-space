@@ -76,43 +76,166 @@ void update_weapons_console(
 //SENSORS =================
 void init_sensors_console(
 		gamestate_struct* gs) {
-	warnx("init_sensors_console not yet implemented");
+	sensors_console_state_struct* scss;
+	int i;
+
+	//Malloc a struct
+	scss = (sensors_console_state_struct*) malloc(sizeof(sensors_console_state_struct));
+	if(scss == NULL)
+		err(-1, "Failed to malloc in init_sensors_console");
+
+	//Init members
+	scss->current_menu = SMS_MAIN;
+	scss->selected = 0;
+	scss->enemy_coord_frame_counter = 0;
+	for(i = 0; i < ENEMY_COORD_UPDATE_DELAY; i++) {
+		scss->delayed_enemy_x_coords[i] = 0;
+		scss->delayed_enemy_y_coords[i] = 0;
+	}
+
+	//Add into gamestate
+	gs->shipstate.console_states[CI_SENSORS] = scss;
 };
 
 void render_sensors_console(
 		int client_index, 
-		sensors_console_state_struct* wcss,
+		sensors_console_state_struct* scss,
 		gamestate_struct* gs) {
 
-	char* rp;
-	int temp_len;
+	char *rp, *temp_rp;
+	//int temp_len;
+	int i;
+	char temp_buff[SCREEN_WIDTH];
+	char title_string[] = "                   Sensors Panel";
+	char main_menu_strings[3][SCREEN_WIDTH] = {
+			"Ship info",
+			"Enemy ship info",
+			"Other info"
+	};
+
+	//Prepare pointers
 	rp = (gs->clients[client_index].render.render_data);
-  
-	int enemy_x = gs->encounter.enemy_location_x;
-	int enemy_y = gs->encounter.enemy_location_y;
-	char location[128];
-	temp_len = sprintf(location, "Enemy ship at coordinates %d, %d", enemy_x, enemy_y);
-	memcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), location, temp_len);
 
-	int enemy_health = gs->encounter.enemy_health;
-	int enemy_max = gs->encounter.enemy_max_health;
-	char health[128];
-	temp_len = sprintf(health, "Enemy ship at health %d/%d", enemy_health, enemy_max);
-	memcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP + 1), health, temp_len);
+	//Render title
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
+			title_string, 
+			CONSOLE_PANEL_WIDTH);
 
+	//render instructions on bottom
+	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 2),
+			"Press e to confirm; q to go back; w/s move up/down; space to exit", 
+			CONSOLE_PANEL_WIDTH - 2);
+	
+	int menu_top = CONSOLE_PANEL_TOP + 2;
+	int menu_left = CONSOLE_PANEL_LEFT + 3;
+
+	switch(scss->current_menu) {
+		case SMS_MAIN:
+			//print all options
+			for(i = 0; i < SENSORS_MAIN_MENU_OPTIONS; i ++) {
+				temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + i * 2);
+				render_strcpy(temp_rp, main_menu_strings[i], CONSOLE_PANEL_WIDTH - 3);
+			}
+
+			//print pointer
+			rp[SCREEN_INDEX(menu_left - 1, menu_top + scss->selected * 2)] = '>';
+			break;
+
+		case SMS_SHIP:
+			//print ship health
+			sprintf(temp_buff, "Ship health: %d", gs->shipstate.health);
+			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
+			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+
+			//print flight state
+			sprintf(temp_buff, "Currently flying in mode: ");
+			switch(gs->shipstate.curr_flight_state) {
+				case FS_PASSIVE:
+					strcat(temp_buff, "PASSIVE");
+					break;
+				case FS_CHASING:
+					strcat(temp_buff, "CHASING");
+					break;
+				case FS_STABLE:
+					strcat(temp_buff, "STABLE");
+					break;
+				default:
+					errx(-1, "unexpected flightstate in render_sensors_console");
+			}
+			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + 2);
+			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			break;
+		case SMS_ENEMY:
+			//print enemy health
+			sprintf(temp_buff, "Enemy ship health: %d", gs->encounter.enemy_health);
+			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
+			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+
+			//prints enemy coords
+			sprintf(temp_buff, "Enemy ship location: %.1f, %.1f",
+					scss->delayed_enemy_x_coords[0],
+					scss->delayed_enemy_y_coords[0]);
+			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + 2);
+			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			break;
+		case SMS_OTHER:
+			//print wip message
+			sprintf(temp_buff, "This screen has not yet been implemented");
+			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
+			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			break;
+	}
 }
 
 void update_input_sensors_console(
 		int client_index, 
-		sensors_console_state_struct* wcss,
+		sensors_console_state_struct* scss,
 		gamestate_struct* gs) {
-	warnx("update_input_sensors_console not yet implemented");
+	//used for turning select values into sms values
+	static sensors_menu_state buttons[] = {SMS_SHIP, SMS_ENEMY, SMS_OTHER};
+	client_input_struct* cisp;
+	cisp = &(gs->clients[client_index].curr_input_state);
+
+
+	if(scss->current_menu == SMS_MAIN) {
+		if(cisp->confirm) {
+			scss->current_menu = buttons[scss->selected];
+		} else {
+			if(cisp->up)
+				scss->selected--;
+			if(cisp->down)
+				scss->selected++;
+			scss->selected = clamp(scss->selected, 0, SENSORS_MAIN_MENU_OPTIONS - 1);
+		}
+	} else {
+		if(cisp->cancel) {
+			scss->current_menu = SMS_MAIN;
+		}
+	}
 }
 
 void update_sensors_console(
-		sensors_console_state_struct* wcss,
+		sensors_console_state_struct* scss,
 		gamestate_struct* gs) {
-	warnx("update_sensors_console not yet implemented");
+	//Handles delayed reporting of enemy position
+	int i;
+
+	//Take another datapoint once per second
+	if(!scss->enemy_coord_frame_counter) {
+		//shift all measurements down
+		for(i = 0; i < ENEMY_COORD_UPDATE_DELAY - 2; i++) {
+			scss->delayed_enemy_x_coords[i] = scss->delayed_enemy_x_coords[i + 1];
+			scss->delayed_enemy_y_coords[i] = scss->delayed_enemy_y_coords[i + 1];
+		}
+		//take a new measurement
+		scss->delayed_enemy_x_coords[i] = gs->encounter.enemy_location_x;
+		scss->delayed_enemy_y_coords[i] = gs->encounter.enemy_location_y;
+
+		//reset frame counter
+		scss->enemy_coord_frame_counter = ENEMY_COORD_UPDATE_FRAMES;
+	}
+
+	scss->enemy_coord_frame_counter--;
 }
 //==========================
 
