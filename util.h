@@ -17,6 +17,7 @@
 
 //frame delay in nanoseconds
 #define FRAME_TIME (33 * 1000 * 1000)
+#define FPS 30
 
 
 //SCREEN WIDTH/HEIGHT TBD
