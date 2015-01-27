@@ -117,8 +117,10 @@ void update_main_game(gamestate_struct* gs) {
 	update_shots(gs);
 
 	//update enemy
-	encounter_move_enemy(gs);
-	encounter_try_firing(gs);
+	if(gs->encounter.enemy_health > 0) {
+		encounter_move_enemy(gs);
+		encounter_try_firing(gs);
+	}
 
 	//delegate to consoles as well
 	update_sensors_console(
