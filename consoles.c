@@ -242,18 +242,15 @@ void init_engines_console(
 	//Init
 	int i;
 	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
-	  /*
-	    snprintf(ecss->states[i], 
-	    FTL_MAX_DEST_STRING, 
-	    "State: %s", 
-	    flight_state_to_string(i));
-	  */
-	  snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "State %c", i+65);
-	//snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);//this one was segfaulting
+	  snprintf(ecss->states[i], 
+		   FTL_MAX_DEST_STRING, 
+		   "State: %s", 
+		   flight_state_to_string(i));
+	snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "EVASIVE ACTION");
 	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
-
+	ecss->evasive_action = 0;
 	//Add to gamestate
 	gs->shipstate.console_states[CI_ENGINES] = ecss;  
 };
@@ -334,6 +331,10 @@ void update_engines_console(
   int time_to_cool = secs_to_frames(10);
   float cool_per_frame = (float)(1 / (float)time_to_cool);
   ecss->engine_heat = fclamp((ecss->engine_heat)-(cool_per_frame), 0, 1);
+
+  int evasion_over = secs_to_frames(2);
+  float down_per_frame = (float)(1 / (float)evasion_over);
+  ecss->evasive_action = fclamp((ecss->evasive_action)-(down_per_frame), 0, 1);
   //warnx("update_engines_console not yet implemented");
 }
 //==========================
