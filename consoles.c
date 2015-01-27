@@ -37,9 +37,8 @@ void render_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	
-	//warnx("render_weapons_console not yet implemented");
-
 	char *rp;
+	int temp_x, temp_y;
 	char title_string[] = "                   Weapons (WIP)";
 
 	//prepare pointers
@@ -59,30 +58,47 @@ void render_weapons_console(
 		*/
 		//hard-coded thing right here
 		
+		//print current weapons
 		char current_weapon_string[CONSOLE_PANEL_WIDTH];
 		if(wcss->current_weapon == 0){
 			strcpy(current_weapon_string,"Current Weapon: Lasers");
 		} else {
 			strcpy(current_weapon_string,"Current Weapon: Missiles");
 		}
-		
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+2),
 					  current_weapon_string,
 					  CONSOLE_PANEL_WIDTH);
 
-		char current_weapon_target[CONSOLE_PANEL_WIDTH];
 
+		//Print current target
+		char current_weapon_target[CONSOLE_PANEL_WIDTH];
 		sprintf(current_weapon_target,"Targeting: (%f,%f)",
 				wcss->target_xs[wcss->current_weapon],
 				wcss->target_ys[wcss->current_weapon]);
-
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+4),
 					  current_weapon_target,
 					  CONSOLE_PANEL_WIDTH);		
-		//instructions
+		//print instructions
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 2),
 			WEAPONS_AIMING_INSTRUCTIONS_STRING, 
 			CONSOLE_PANEL_WIDTH - 2);
+
+		//print instructions
+		temp_x = CONSOLE_PANEL_LEFT + WEAPONS_CROSSHAIR_LEFT;
+		temp_y = CONSOLE_PANEL_TOP + WEAPONS_CROSSHAIR_TOP;
+		int marker;
+		int origin_x = temp_x + WEAPONS_AIMING_BOUNDS * WEAPONS_CROSSHAIR_SCALE;
+		int origin_y = temp_y + WEAPONS_AIMING_BOUNDS * WEAPONS_CROSSHAIR_SCALE;
+		for(marker = -5; marker <= 5; marker++) {
+			char m = (marker > 0 ? marker : -1 * marker) + '0';
+			rp[SCREEN_INDEX(origin_x + marker * WEAPONS_CROSSHAIR_SCALE, origin_y)] = m;
+			rp[SCREEN_INDEX(origin_x, origin_y + marker * WEAPONS_CROSSHAIR_SCALE)] = m;
+		}
+
+		origin_x += WEAPONS_CROSSHAIR_SCALE * wcss->target_xs[wcss->current_weapon];
+		origin_y -= WEAPONS_CROSSHAIR_SCALE * wcss->target_ys[wcss->current_weapon];
+		rp[SCREEN_INDEX(origin_x, origin_y)] = '+';
+		
 		
 	} else if (metadata == 1){//status
 		/*
@@ -133,20 +149,28 @@ void update_input_weapons_console(
 	if (metadata == 0){//aiming
 		//not drifting, just moving
 		if (cisp->up){
-			wcss->target_ys[wcss->current_weapon]++;
+			wcss->target_ys[wcss->current_weapon]+= 0.5;
 		}
 		if (cisp->down){
-			wcss->target_ys[wcss->current_weapon]--;
+			wcss->target_ys[wcss->current_weapon]-= 0.5;
 		}
 		if (cisp->left){
-			wcss->target_xs[wcss->current_weapon]--;
+			wcss->target_xs[wcss->current_weapon]-= 0.5;
 		}
 		if (cisp->right){
-			wcss->target_xs[wcss->current_weapon]++;
+			wcss->target_xs[wcss->current_weapon]+= 0.5;
 		}
 		if (cisp->cancel){
 			wcss->current_weapon = 1 - wcss->current_weapon;//0 and 1
 		}
+		wcss->target_xs[wcss->current_weapon] = 
+				fclamp(wcss->target_xs[wcss->current_weapon],
+						-1 * WEAPONS_AIMING_BOUNDS,
+						WEAPONS_AIMING_BOUNDS);
+		wcss->target_ys[wcss->current_weapon] = 
+				fclamp(wcss->target_ys[wcss->current_weapon],
+						-1 * WEAPONS_AIMING_BOUNDS,
+						WEAPONS_AIMING_BOUNDS);
 		
 		//what we could do is text input
 		//or we could use wasd and then e to confirm the spot to fire at

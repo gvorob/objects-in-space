@@ -13,6 +13,11 @@
 #define WEAPONS_AIMING_INSTRUCTIONS_STRING "Use w/a/s/d to change where you are targeting; q to change weapons"
 #define WEAPONS_STATUS_INSTRUCTIONS_STRING "Use e to fire, q to change weapons"
 
+#define WEAPONS_AIMING_BOUNDS 5
+#define WEAPONS_CROSSHAIR_TOP 10
+#define WEAPONS_CROSSHAIR_LEFT 6
+#define WEAPONS_CROSSHAIR_SCALE 2 //one side of the square
+
 typedef enum _weapons_console_type{
 	WCT_AIM,
 	WCT_STAT,
