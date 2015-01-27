@@ -86,6 +86,19 @@ typedef enum _flight_state {
 	FS_STABLE
 } flight_state;
 
+typedef enum _weapon_type {
+	//lasers,missiles,flak,plasma,etc...
+  	WT_LASER,
+	WT_MISSILE,
+	WT_FLAK,
+	WT_PLASMA
+} weapon_type;
+
+typedef struct _weapon_struct {
+	weapon_type type;
+	int time_to_charge;
+} weapon_struct;
+
 typedef struct _shipstate_struct {
 	//all console states
 	//e.g.:
@@ -122,7 +135,7 @@ typedef struct _shot_struct {
 	int target_y;
 	shot_type type;
 	int time_to_fly;
-  	shot_struct *next;
+  	struct _shot_struct *next;
 } shot_struct;
 
 typedef struct _encounter_struct {
@@ -145,19 +158,6 @@ typedef struct _encounter_struct {
   	int enemy_max_health;
   	int enemy_health;
 } encounter_struct;
-
-typedef enum _weapon_type {
-	//lasers,missiles,flak,plasma,etc...
-  	WT_LASER,
-	WT_MISSILE,
-	WT_FLAK,
-	WT_PLASMA
-} weapon_type;
-
-typedef struct _weapon_struct {
-	weapon_type type;
-	int time_to_charge;
-} weapon_struct;
 
 //MAX_PLAYERS defined in util.h
 typedef struct _gamestate_struct { //NOT DONE YET
