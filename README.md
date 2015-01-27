@@ -41,5 +41,5 @@ Design Docs
 How to Run
 ----------
 ./space --server
+./space --client -ipxxx.xxx.xxx.xxx
 
-./space --client -ip127.0.0.1
