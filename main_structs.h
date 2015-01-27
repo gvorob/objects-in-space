@@ -135,6 +135,9 @@ typedef enum _shot_type{
 typedef struct _shot_struct {
 	int target_x;
 	int target_y;
+	int entry_x; //for drawing
+	int entry_y;
+	int entry_time; //how many frames left on the clock
 	shot_type type;
 	int time_to_fly;
   	struct _shot_struct *next;
