@@ -7,7 +7,7 @@ void init_weapons_console(
 	weapons_console_state_struct* wcss;
 	
 	wcss = (weapons_console_state_struct *)malloc(sizeof(weapons_console_state_struct));
-	
+	wcss->current_weapon = 0;
 	int i;
 	for (i = 0; i < WEAPONS_MAX_WEAP;i++){
 		wcss->target_xs[i] = 0;
@@ -50,10 +50,33 @@ void render_weapons_console(
 			title_string, 
 			CONSOLE_PANEL_WIDTH);
 	if (metadata == 0){//aiming
+		char aiming_string[] = "Aiming stuff here";
 		
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP),
+					  aiming_string,
+					  CONSOLE_PANEL_WIDTH);
+		
+		//hard-coded thing right here
+		/*
+		char current_weapon_string[CONSOLE_PANEL_WIDTH];
+		if(wcss->current_weapon == 0){
+			strcpy(current_weapon_string,"Lasers");
+		} else {
+			strcpy(current_weapon_string,"Missiles");
+		}
+			
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP+2),
+					  current_weapon_string,
+					  CONSOLE_PANEL_WIDTH);
+		*/
 	} else if (metadata == 1){//status
+		char status_string[] = " Test status here";
 
+		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP),
+					  status_string,
+					  CONSOLE_PANEL_WIDTH);
 	}
+	
 	
 }
 /*
@@ -69,6 +92,21 @@ void update_input_weapons_console(
 	client_input_struct * cisp;
 	cisp = &(gs->clients[client_index].curr_input_state);
 	if (metadata == 0){//aiming
+		if (cisp->up){
+			wcss->target_ys[wcss->current_weapon]++;
+		}
+		if (cisp->down){
+			wcss->target_ys[wcss->current_weapon]--;
+		}
+		if (cisp->left){
+			wcss->target_xs[wcss->current_weapon]--;
+		}
+		if (cisp->right){
+			wcss->target_xs[wcss->current_weapon]--;
+		}
+		if (cisp->cancel){
+			wcss->current_weapon = 1 - wcss->current_weapon;//0 and 1
+		}
 		//what we could do is text input
 		//or we could use wasd and then e to confirm the spot to fire at
 	} else if (metadata == 1){//status
@@ -84,11 +122,11 @@ damage on enemy ship and a whole load of other combat mechanics
 void update_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
-	if (metadata == 0){//aiming
+	//if (metadata == 0){//aiming
 
-	} else if (metadata == 1){//status
+	//} else if (metadata == 1){//status
 
-	}
+	//}
 
 	warnx("update_weapons_console not yet implemented");
 }

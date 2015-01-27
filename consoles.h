@@ -15,6 +15,7 @@ typedef struct _weapons_console_state_struct {
 	float target_xs[WEAPONS_MAX_WEAP];
 	float target_ys[WEAPONS_MAX_WEAP];
 	weapon_type types[WEAPONS_MAX_WEAP]; 
+	int current_weapon;
 	double weapon_charges[WEAPONS_MAX_WEAP];
 }  weapons_console_state_struct;
 
