@@ -341,17 +341,23 @@ void render_sensors_console(
 			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
 			break;
 		case SMS_ENEMY:
-			//print enemy health
-			sprintf(temp_buff, "Enemy ship health: %d", gs->encounter.enemy_health);
-			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
-			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			if(gs->encounter.enemy_health > 0) {
+				//print enemy health
+				sprintf(temp_buff, "Enemy ship health: %d", gs->encounter.enemy_health);
+				temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
+				render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
 
-			//prints enemy coords
-			sprintf(temp_buff, "Enemy ship location: %.1f, %.1f",
-					scss->delayed_enemy_x_coords[0],
-					scss->delayed_enemy_y_coords[0]);
-			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + 2);
-			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+				//prints enemy coords
+				sprintf(temp_buff, "Enemy ship location: %.1f, %.1f",
+						scss->delayed_enemy_x_coords[0],
+						scss->delayed_enemy_y_coords[0]);
+				temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + 2);
+				render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			} else {
+				sprintf(temp_buff, "No hostiles detected");
+				temp_rp = rp + SCREEN_INDEX(menu_left, menu_top);
+				render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
+			}
 			break;
 		case SMS_OTHER:
 			//print wip message
