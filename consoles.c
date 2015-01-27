@@ -536,6 +536,15 @@ void render_engines_console(
 	}
 	
 
+	//Print if I'm currently evading
+	if(gs->shipstate.evasive_action > 0) {
+		temp_x = CONSOLE_PANEL_LEFT + ENGINES_LEFT_MARGIN;
+		temp_y = CONSOLE_PANEL_TOP + ENGINES_EVADING_STATUS_TOP;
+		render_strcpy(rp + SCREEN_INDEX(temp_x, temp_y),
+				"Performing evasive maneuvers!",
+				CONSOLE_PANEL_WIDTH - 2);
+	}
+	
 	//render instructions on bottom
 	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT + 2, CONSOLE_PANEL_BOTTOM - 1),
 			INSTRUCTIONS_STRING, 

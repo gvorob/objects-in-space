@@ -114,9 +114,14 @@ void update_main_game(gamestate_struct* gs) {
 
 		//if hit
 		if(!ssp->next->time_to_fly) {
-			//deal damage
-			gs->shipstate.health--;
-			effect_hit(ssp->next->target_x, ssp->next->target_y, gs);
+			if(gs->shipstate.evasive_action <= 0.0f) {
+				//deal damage
+				gs->shipstate.health--;
+				effect_hit(ssp->next->target_x, ssp->next->target_y, gs);
+			} else {
+				//miss
+				
+			}
 			//delete the shot
 			ssp->next = ssp->next->next;
 
@@ -330,6 +335,9 @@ void render_main_game(int client_index, gamestate_struct* gs) {
 	sprintf(temp_buff,"enemy loiter_time: %d", 
 			gs->encounter.loiter_time);
 	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT, ALERT_PANEL_TOP + 3), temp_buff, SCREEN_WIDTH);
+	sprintf(temp_buff,"evasive_action: %f", 
+			gs->shipstate.evasive_action);
+	render_strcpy(rp + SCREEN_INDEX(ALERT_PANEL_LEFT + 30, ALERT_PANEL_TOP), temp_buff, SCREEN_WIDTH);
 	
 	//Mark bottom right corner
 	rp[SCREEN_INDEX(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)] = '/';

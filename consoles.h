@@ -75,6 +75,7 @@ typedef struct _ftl_console_state_struct {
 #define ENGINES_EVADE_BOX_LEFT 45
 #define ENGINES_CURR_FLIGHT_STATE_TOP 12
 #define ENGINES_SHOT_INFO_TOP 14
+#define ENGINES_EVADING_STATUS_TOP 16
 
 typedef struct _engines_console_state_struct {
   int current;
