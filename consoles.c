@@ -8,20 +8,17 @@ void init_weapons_console(
 	
 	wcss = (weapons_console_state_struct *)malloc(sizeof(weapons_console_state_struct));
 	
-	wcss->targx = 0;
-	wcss->targy = 0;
-
-	int i = 0;
+	int i;
 	for (i = 0; i < WEAPONS_MAX_WEAP;i++){
+		wcss->target_xs[i] = 0;
+		wcss->target_ys[i] = 0;
+		
 		if (i == 0){
-			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
-					 "Missiles");
+			wcss->types[i] = WT_LASER;
 		} else if (i == 1){
-			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
-					 "Lasers");
+			wcss->types[i] = WT_MISSILE;
 		} else {
-			snprintf(wcss->weapon_names[i],WEAPONS_MAX_WEAP_STRING,
-					 "Weapon %d",i);
+			//well
 		}
 		wcss->weapon_charges[i] = 100;
 	}
@@ -52,6 +49,12 @@ void render_weapons_console(
 	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
 			title_string, 
 			CONSOLE_PANEL_WIDTH);
+	if (metadata == 0){//aiming
+		
+	} else if (metadata == 1){//status
+
+	}
+	
 }
 /*
 takes input from the user, say wasd, to change the target of the weapon chosen
@@ -62,7 +65,17 @@ void update_input_weapons_console(
 		int metadata,
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
-	warnx("update_input_weapons_console not yet implemented");
+
+	client_input_struct * cisp;
+	cisp = &(gs->clients[client_index].curr_input_state);
+	if (metadata == 0){//aiming
+		//what we could do is text input
+		//or we could use wasd and then e to confirm the spot to fire at
+	} else if (metadata == 1){//status
+		//nothing to do unless multiple tabs for further confusion
+	}
+	
+	//warnx("update_input_weapons_console not yet implemented");
 }
 /*
 updates the console by making the charge bar update per weapon, as well as process
@@ -71,6 +84,12 @@ damage on enemy ship and a whole load of other combat mechanics
 void update_weapons_console(
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
+	if (metadata == 0){//aiming
+
+	} else if (metadata == 1){//status
+
+	}
+
 	warnx("update_weapons_console not yet implemented");
 }
 //==========================

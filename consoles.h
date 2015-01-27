@@ -6,10 +6,15 @@
 
 #define WEAPONS_MAX_WEAP 2
 #define WEAPONS_MAX_WEAP_STRING 20
+typedef enum _weapons_console_type{
+	WCT_AIM,
+	WCT_STAT,
+} weapons_console_type;
+
 typedef struct _weapons_console_state_struct {
-	int targx;
-	int targy;
-	char weapon_names[WEAPONS_MAX_WEAP][WEAPONS_MAX_WEAP_STRING];
+	float target_xs[WEAPONS_MAX_WEAP];
+	float target_ys[WEAPONS_MAX_WEAP];
+	weapon_type types[WEAPONS_MAX_WEAP]; 
 	double weapon_charges[WEAPONS_MAX_WEAP];
 }  weapons_console_state_struct;
 
