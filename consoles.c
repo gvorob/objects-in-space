@@ -36,6 +36,7 @@ enemy ship layout
  */
 void render_weapons_console(
 		int client_index, 
+		int metadata,
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	
@@ -58,6 +59,7 @@ also can change weapon with another key
 */
 void update_input_weapons_console(
 		int client_index, 
+		int metadata,
 		weapons_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	warnx("update_input_weapons_console not yet implemented");
@@ -99,6 +101,7 @@ void init_sensors_console(
 
 void render_sensors_console(
 		int client_index, 
+		int metadata,
 		sensors_console_state_struct* scss,
 		gamestate_struct* gs) {
 
@@ -177,6 +180,7 @@ void render_sensors_console(
 
 void update_input_sensors_console(
 		int client_index, 
+		int metadata,
 		sensors_console_state_struct* scss,
 		gamestate_struct* gs) {
 	//used for turning select values into sms values
@@ -256,7 +260,8 @@ void init_engines_console(
 };
 
 void render_engines_console(
-		int client_index,
+		int client_index, 
+		int metadata,
 		engines_console_state_struct* ecss,
 		gamestate_struct* gs) {
 	char *rp, *temp_rp;
@@ -306,6 +311,7 @@ void render_engines_console(
 
 void update_input_engines_console(
 				  int client_index, 
+				  int metadata,
 				  engines_console_state_struct* ecss,
 				  gamestate_struct* gs) {
   client_input_struct* cisp;
@@ -349,6 +355,7 @@ void init_repairs_console(
 
 void render_repairs_console(
 		int client_index, 
+		int metadata,
 		repairs_console_state_struct* wcss,
 		gamestate_struct* gs) {
 	warnx("render_repairs_console not yet implemented");
@@ -356,6 +363,7 @@ void render_repairs_console(
 
 void update_input_repairs_console(
 		int client_index, 
+		int metadata,
 		repairs_console_state_struct* wcss,
 		gamestate_struct* gs) {
   	warnx("update_input_repairs_console not yet implemented");
@@ -393,6 +401,7 @@ void init_ftl_console(
 
 void render_ftl_console(
 		int client_index, 
+		int metadata,
 		ftl_console_state_struct *fcss,
 		gamestate_struct *gs) {
 
@@ -443,6 +452,7 @@ void render_ftl_console(
 
 void update_input_ftl_console(
 		int client_index, 
+		int metadata,
 		ftl_console_state_struct* fcss,
 		gamestate_struct* gs) {
 	

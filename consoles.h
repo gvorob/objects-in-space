@@ -73,10 +73,12 @@ void init_weapons_console(
 	gamestate_struct*);
 void render_weapons_console(
 	int client_index, 
+	int metadata,
 	weapons_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_input_weapons_console(
 	int client_index, 
+	int metadata,
 	weapons_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_weapons_console(
@@ -88,10 +90,12 @@ void init_sensors_console(
 	gamestate_struct*);
 void render_sensors_console(
 	int client_index, 
+	int metadata,
 	sensors_console_state_struct* scss,
 	gamestate_struct* gs);
 void update_input_sensors_console(
 	int client_index, 
+	int metadata,
 	sensors_console_state_struct* scss,
 	gamestate_struct* gs);
 void update_sensors_console(
@@ -102,10 +106,12 @@ void init_engines_console(
 	gamestate_struct*);
 void render_engines_console(
 	int client_index, 
+	int metadata,
 	engines_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_input_engines_console(
 	int client_index, 
+	int metadata,
 	engines_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_engines_console(
@@ -117,10 +123,12 @@ void init_repairs_console(
 	gamestate_struct*);
 void render_repairs_console(
 	int client_index, 
+	int metadata,
 	repairs_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_input_repairs_console(
 	int client_index, 
+	int metadata,
 	repairs_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_repairs_console(
@@ -132,10 +140,12 @@ void init_ftl_console(
 	gamestate_struct*);
 void render_ftl_console(
 	int client_index, 
+	int metadata,
 	ftl_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_input_ftl_console(
 	int client_index, 
+	int metadata,
 	ftl_console_state_struct* wcss,
 	gamestate_struct* gs);
 void update_ftl_console(
