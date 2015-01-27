@@ -62,12 +62,8 @@ typedef enum _tile_type {
 
 typedef struct _tile_struct {
 	tile_type type;
-<<<<<<< HEAD
-  	void* console_state_ptr;
-=======
 	int metadata;
 	void* console_state_ptr;
->>>>>>> 6a11db51c26a332a0b9652fed46db4750f25d3b3
 } tile_struct;
 
 typedef struct _ship_tiles_struct {

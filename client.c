@@ -25,6 +25,7 @@ void init_client(char* ip, char* port){
 	setup_ncurses();
 	printf("Done, going to main loop\n");
 	
+
 	client_main_loop(socket_d);
 }
 
