@@ -149,19 +149,7 @@ void render_sensors_console(
 
 			//print flight state
 			sprintf(temp_buff, "Currently flying in mode: ");
-			switch(gs->shipstate.curr_flight_state) {
-				case FS_PASSIVE:
-					strcat(temp_buff, "PASSIVE");
-					break;
-				case FS_CHASING:
-					strcat(temp_buff, "CHASING");
-					break;
-				case FS_STABLE:
-					strcat(temp_buff, "STABLE");
-					break;
-				default:
-					errx(-1, "unexpected flightstate in render_sensors_console");
-			}
+			strcat(temp_buff, flight_state_to_string(gs->shipstate.curr_flight_state));
 			temp_rp = rp + SCREEN_INDEX(menu_left, menu_top + 2);
 			render_strcpy(temp_rp, temp_buff, CONSOLE_PANEL_WIDTH - 3);
 			break;
@@ -254,8 +242,14 @@ void init_engines_console(
 	//Init
 	int i;
 	for(i = 0; i < ENGINES_MAX_STATES-1; i++)
-		snprintf(ecss->states[i], ENGINES_MAX_DEST_STRING, "State %c", i+65);
-	snprintf(ecss->states[i+1], ENGINES_MAX_DEST_STRING, "State %c", i+65);
+	  /*
+	    snprintf(ecss->states[i], 
+	    FTL_MAX_DEST_STRING, 
+	    "State: %s", 
+	    flight_state_to_string(i));
+	  */
+	  snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "State %c", i+65);
+	//snprintf(ecss->states[i+1], FTL_MAX_DEST_STRING, "State %c", i+65);//this one was segfaulting
 	ecss->engine_heat = 1;
 	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;

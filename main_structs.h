@@ -174,4 +174,7 @@ typedef struct _gamestate_struct { //NOT DONE YET
 int is_console(tile_type t);
 int is_walkable(tile_type t);
 
+//to_strings (note, don't modify the returned char*)
+char *flight_state_to_string(flight_state fs);
+
 #endif
