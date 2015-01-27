@@ -11,6 +11,13 @@ Members
 Pd 4
 ----
 
+Instructions
+------------
+* WSAD to move
+* E to confirm, Q to go back
+* Space to use a console
+* Requires communication and a healthy dose of yelling
+
 Extra Instructions
 ------------------
 * NCurses needed
@@ -34,4 +41,5 @@ Design Docs
 How to Run
 ----------
 ./space --server
+
 ./space --client -ip127.0.0.1

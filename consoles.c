@@ -270,10 +270,7 @@ void init_engines_console(
 		   "State: %s", 
 		   flight_state_to_string(i));
 	snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "EVASIVE ACTION");
-	ecss->engine_heat = 1;
-	ecss->curr_flight_state = FS_PASSIVE;
 	ecss->current = 0;
-	ecss->evasive_action = 0;
 	//Add to gamestate
 	gs->shipstate.console_states[CI_ENGINES] = ecss;  
 };
@@ -297,7 +294,7 @@ void render_engines_console(
 		      CONSOLE_PANEL_WIDTH);
 
 	//render energy bar
-	int energy_width = (int)((ecss->engine_heat) * (float)ENGINES_CHARGE_BAR_WIDTH + 0.5);
+	int energy_width = (int)((gs->shipstate.engine_heat) * (float)ENGINES_CHARGE_BAR_WIDTH + 0.5);
   
 	temp_rp = (char *)(rp + SCREEN_INDEX(
 					     ENGINES_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
@@ -307,11 +304,12 @@ void render_engines_console(
   }
   
 	//overheat message
-	if(ecss->engine_heat >= 1.0f)
-	  		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, ENGINES_CHARGE_BAR_TOP + 1), 
-				overheat_string, 
-				CONSOLE_PANEL_WIDTH);
-	
+	float new = gs->shipstate.engine_heat + 0.3;
+	if(new > 1.0f){
+	  render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, ENGINES_CHARGE_BAR_TOP + 1), 
+			overheat_string, 
+			CONSOLE_PANEL_WIDTH);
+	}
 	//Show states
 	for(i = 0; i < ENGINES_MAX_STATES; i++) {
 	  render_strcpy(rp + 
@@ -342,27 +340,26 @@ void update_input_engines_console(
   if(cisp->down) {
     ecss->current++;
   }
-  
   ecss->current = clamp(ecss->current, 0, ENGINES_MAX_STATES - 1);
-  //warnx("update_input_engines_console not yet implemented");
+  if(cisp->confirm){
+    if (ecss->current < 3){
+      gs->shipstate.curr_flight_state = ecss->current;
+    }
+    if (ecss->current == 3){
+      float new = gs->shipstate.engine_heat + 0.3;
+      if (new <= 1.0f){
+	gs->shipstate.evasive_action = 1;
+	gs->shipstate.engine_heat = gs->shipstate.engine_heat + 0.3;
+      }
+    }
+  }
 }
-
-void update_engines_console(
-			    engines_console_state_struct* ecss,
-			    gamestate_struct* gs) {
-  gs->shipstate.engine_heat = ecss->engine_heat;
-  gs->shipstate.curr_flight_state = ecss->curr_flight_state;
-
-  int time_to_cool = secs_to_frames(10);
-  float cool_per_frame = (float)(1 / (float)time_to_cool);
-  ecss->engine_heat = fclamp((ecss->engine_heat)-(cool_per_frame), 0, 1);
-
-  int evasion_over = secs_to_frames(2);
-  float down_per_frame = (float)(1 / (float)evasion_over);
-  ecss->evasive_action = fclamp((ecss->evasive_action)-(down_per_frame), 0, 1);
-  //warnx("update_engines_console not yet implemented");
-}
-//==========================
+ void update_engines_console(
+			     engines_console_state_struct* ecss,
+			     gamestate_struct* gs) {
+   //warnx("update_engines_console not yet implemented");
+ }
+ //==========================
 
 
 
@@ -412,7 +409,6 @@ void init_ftl_console(
 	for(i = 0; i < FTL_MAX_DESTS; i++)
 		snprintf(fcss->destinations[i], FTL_MAX_DEST_STRING, "Destination #%d", i);
 	fcss->current = 0;
-	fcss->charge = 0;
 
 	//Add into gamestate
 	gs->shipstate.console_states[CI_FTL] = fcss;
@@ -439,7 +435,7 @@ void render_ftl_console(
 			CONSOLE_PANEL_WIDTH);
 
 	//render charge bar
-	int charge_width = (int)((fcss->charge) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
+	int charge_width = (int)((gs->shipstate.ftl_charge) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
 	temp_rp = (char *)(rp + SCREEN_INDEX(
 			FTL_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
 			FTL_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
@@ -448,7 +444,7 @@ void render_ftl_console(
 	}
 	
 	//CHARGED message
-	if(fcss->charge >= 1.0f)
+	if(gs->shipstate.ftl_charge >= 1.0f)
 		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, FTL_CHARGE_BAR_TOP + 1), 
 				charged_string, 
 				CONSOLE_PANEL_WIDTH);
@@ -488,11 +484,8 @@ void update_input_ftl_console(
 	fcss->current = clamp(fcss->current, 0, FTL_MAX_DESTS - 1);
 }
 
-void update_ftl_console(
-		ftl_console_state_struct* fcss,
+ void update_ftl_console(
+			ftl_console_state_struct* fcss,
 		gamestate_struct* gs) {
-	//Has to charge in 20 seconds
-	//20 * 30 = 600 frams
-	fcss->charge = fclamp(fcss->charge + 1.0f/600.0f, 0, 1);
 }
 //==========================
