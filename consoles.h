@@ -77,6 +77,10 @@ typedef struct _ftl_console_state_struct {
 #define ENGINES_SHOT_INFO_TOP 14
 #define ENGINES_EVADING_STATUS_TOP 16
 
+#define ENGINES_EVADE_HEAT_COST 0.3f //fraction of the heat bar
+#define ENGINES_EVADE_DURATION 1.5f
+#define ENGINES_COOLDOWN_TIME 20.0f
+
 typedef struct _engines_console_state_struct {
   int current;
   int evade_selected;

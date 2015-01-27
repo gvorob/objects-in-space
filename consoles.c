@@ -584,10 +584,10 @@ void update_input_engines_console(
 			gs->shipstate.curr_flight_state = ecss->current;
 		} else { //If selectin evasive action
 
-			float new = gs->shipstate.engine_heat + 0.3;
+			float new = gs->shipstate.engine_heat + ENGINES_EVADE_HEAT_COST;
 			if (new <= 1.0f){
 				gs->shipstate.evasive_action = 1;
-				gs->shipstate.engine_heat = gs->shipstate.engine_heat + 0.3;
+				gs->shipstate.engine_heat = gs->shipstate.engine_heat + ENGINES_EVADE_HEAT_COST;
 			}
 		}
 	}

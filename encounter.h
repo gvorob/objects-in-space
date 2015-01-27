@@ -8,8 +8,8 @@
 #define ENC_MIN_HEALTH 5
 #define ENC_MAX_HEALTH 15
 
-#define ENC_MIN_FIRE_DELAY 5.0f //seconds
-#define ENC_MAX_FIRE_DELAY 12.0f
+#define ENC_MIN_FIRE_DELAY 3.0f //seconds
+#define ENC_MAX_FIRE_DELAY 8.0f
 
 #define ENC_MIN_LOC -5.0f
 #define ENC_MAX_LOC 5.0f

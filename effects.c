@@ -12,14 +12,36 @@ void effect_hit(int x, int y, struct _gamestate_struct *gs) {
 
 		temp_es.data.spark.x = x;
 		temp_es.data.spark.y = y;
-		temp_es.data.spark.vx = rand_float(-1,1);
-		temp_es.data.spark.vy = rand_float(-1,1);
+		temp_es.data.spark.vx = rand_float(-15,15) / FPS;
+		temp_es.data.spark.vy = rand_float(-15,15) / FPS;
 		temp_es.data.spark.ttl = rand_int(1,20);
 		
 
 		//create and add to LL
 		create_effect(&temp_es, gs);
 	}
+}
+
+#define EFFECT_MISS_SPEED 18.0f
+
+void effect_miss(int x, int y, int dx, int dy, struct _gamestate_struct *gs) {
+	effect_struct temp_es;
+
+	float dist = euclid_dist(dx, dy);
+	float scale = EFFECT_MISS_SPEED / dist / FPS;
+
+	//init shot
+	temp_es.type = ET_HIT_SPARK;
+
+	temp_es.data.spark.x = x;
+	temp_es.data.spark.y = y;
+	temp_es.data.spark.vx = dx * scale;
+	temp_es.data.spark.vy = dy * scale;
+	temp_es.data.spark.ttl = rand_int(60,120);
+	
+
+	//create and add to LL
+	create_effect(&temp_es, gs);
 }
 
 void create_effect(effect_struct *es, gamestate_struct *gs) {

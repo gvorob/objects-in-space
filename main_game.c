@@ -114,11 +114,14 @@ void update_main_game(gamestate_struct* gs) {
 
 		//if hit
 		if(!ssp->next->time_to_fly) {
+			shot_struct s = *(ssp->next);
+			
 			if(gs->shipstate.evasive_action <= 0.0f) {
 				//deal damage
 				gs->shipstate.health--;
-				effect_hit(ssp->next->target_x, ssp->next->target_y, gs);
+				effect_hit(s.target_x, s.target_y, gs);
 			} else {
+				effect_miss(s.target_x, s.target_y, s.target_x - s.entry_x, s.target_y - s.entry_y, gs);
 				//miss
 				
 			}
@@ -159,12 +162,12 @@ void update_main_game(gamestate_struct* gs) {
 			gs);
 
 	//update evasion
-	int evasion = secs_to_frames(2);
+	int evasion = secs_to_frames(ENGINES_EVADE_DURATION);
 	float down_per_frame = (float)(1 / (float)evasion);
 	gs->shipstate.evasive_action = fclamp((gs->shipstate.evasive_action)-(down_per_frame), 0, 1);
 	
 	//update heat
-	int time_to_cool = secs_to_frames(10);
+	int time_to_cool = secs_to_frames(ENGINES_COOLDOWN_TIME);
 	float cool_per_frame = (float)(1 / (float)time_to_cool);
 	gs->shipstate.engine_heat = fclamp((gs->shipstate.engine_heat)-(cool_per_frame), 0, 1);
 }
