@@ -17,10 +17,6 @@ typedef struct _sensors_console_state_struct {
 
 }  sensors_console_state_struct;
 
-typedef struct _engines_console_state_struct {
-
-}  engines_console_state_struct;
-
 typedef struct _repairs_console_state_struct {
 
 }  repairs_console_state_struct;
@@ -38,6 +34,14 @@ typedef struct _ftl_console_state_struct {
 	int current;
 	float charge;
 }  ftl_console_state_struct;
+
+#define ENGINES_MAX_STATES 3
+typedef struct _engines_console_state_struct {
+  float engine_heat; //pushes info to shipstate, 0-1
+  flight_state curr_flight_state; //pushes info to shipstate
+  int current;
+  char states[ENGINES_MAX_STATES][FTL_MAX_DEST_STRING];
+} engines_console_state_struct;
 
 void init_weapons_console(
 	gamestate_struct*);
@@ -67,7 +71,6 @@ void update_input_sensors_console(
 void update_sensors_console(
 	sensors_console_state_struct* wcss,
 	gamestate_struct* gs);
-
 
 void init_engines_console(
 	gamestate_struct*);

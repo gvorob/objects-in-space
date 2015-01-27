@@ -163,7 +163,7 @@ typedef struct _encounter_struct {
 typedef struct _gamestate_struct { //NOT DONE YET
 	flow_state curr_flow_state;//main game, connecting, dialogue box
 	shipstate_struct shipstate;
-	player_struct players[MAX_PLAYERS];
+  	player_struct players[MAX_PLAYERS];
 	//if players[i].is_connected == 0, not connected
 	client_struct clients[MAX_PLAYERS];
 	//if clients[i].socket_d == -1, not connected

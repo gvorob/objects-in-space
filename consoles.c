@@ -3,7 +3,7 @@
 //WEAPONS =================
 void init_weapons_console(
 		gamestate_struct* gs) {
-	
+       
 	weapons_console_state_struct* wcss;
 	
 	wcss = (weapons_console_state_struct *)malloc(sizeof(weapons_console_state_struct));
@@ -120,39 +120,99 @@ void update_sensors_console(
 
 //ENGINES =================
 void init_engines_console(
-		gamestate_struct* gs) {
-	warnx("init_engines_console not yet implemented");
+			  gamestate_struct* gs) {
+  	engines_console_state_struct* ecss;
+	
+	//Mallocing
+	ecss = (engines_console_state_struct*)malloc(sizeof(engines_console_state_struct));
+	if(ecss == NULL)
+		err(-1, "Failed to malloc in init_engines_console");
+	
+	//Init
+	int i;
+	for(i = 0; i < ENGINES_MAX_STATES; i++)
+		snprintf(ecss->states[i], FTL_MAX_DEST_STRING, "Destination %c", i+65);
+	ecss->engine_heat = 0;
+	ecss->curr_flight_state = FS_PASSIVE;
+	ecss->current = 0;
+
+	//Add to gamestate
+	gs->shipstate.console_states[CI_ENGINES] = ecss;  
 };
 
 void render_engines_console(
-		int client_index, 
-		engines_console_state_struct* wcss,
+		int client_index,
+		engines_console_state_struct* ecss,
 		gamestate_struct* gs) {
-	warnx("render_engines_console not yet implemented");
-
-	char *rp;
-	char title_string[] = "                   Engines (WIP)";
-
+	char *rp, *temp_rp;
+	char title_string[] = "                   Engines";
+	int i;
+	char overheat_string[] = "                    OVERHEATING";
+	
 	//prepare pointers
 	rp = (gs->clients[client_index].render.render_data);
-
+	
 	//Render title
 	render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, CONSOLE_PANEL_TOP), 
-			title_string, 
-			CONSOLE_PANEL_WIDTH);
+		      title_string, 
+		      CONSOLE_PANEL_WIDTH);
+
+	//render energy bar
+	int energy_width = (int)((ecss->engine_heat) * (float)FTL_CHARGE_BAR_WIDTH + 0.5);
+  
+	temp_rp = (char *)(rp + SCREEN_INDEX(
+					     FTL_CHARGE_BAR_LEFT + CONSOLE_PANEL_LEFT,
+					     FTL_CHARGE_BAR_TOP + CONSOLE_PANEL_TOP));
+	for(i = 0; i < FTL_CHARGE_BAR_WIDTH; i++) {
+		temp_rp[i] = (i > energy_width) ? '-' : '+';
+  }
+  
+	//overheat message
+	if(ecss->engine_heat >= 1.0f)
+	  		render_strcpy(rp + SCREEN_INDEX(CONSOLE_PANEL_LEFT, FTL_CHARGE_BAR_TOP + 1), 
+				overheat_string, 
+				CONSOLE_PANEL_WIDTH);
+	
+	//Show destinations
+	for(i = 0; i < ENGINES_MAX_STATES; i++) {
+	  render_strcpy(rp + 
+			SCREEN_INDEX(
+				     CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN, 
+				     CONSOLE_PANEL_TOP + FTL_DESTS_TOP + i * 2), 
+			ecss->states[i], 
+			CONSOLE_PANEL_WIDTH - FTL_LEFT_MARGIN);
+	}
+	
+	//Show current destination
+	rp[SCREEN_INDEX(
+			CONSOLE_PANEL_LEFT + FTL_LEFT_MARGIN - 1, 
+			CONSOLE_PANEL_TOP + FTL_DESTS_TOP + ecss->current * 2)] = '>';
 }
 
 void update_input_engines_console(
-		int client_index, 
-		engines_console_state_struct* wcss,
-		gamestate_struct* gs) {
-	warnx("update_input_engines_console not yet implemented");
+				  int client_index, 
+				  engines_console_state_struct* ecss,
+				  gamestate_struct* gs) {
+  client_input_struct* cisp;
+  cisp = &(gs->clients[client_index].curr_input_state);
+  
+  if(cisp->up) {
+    ecss->current--;
+  }
+  if(cisp->down) {
+    ecss->current++;
+  }
+  
+  ecss->current = clamp(ecss->current, 0, FTL_MAX_DESTS - 1);
+  //warnx("update_input_engines_console not yet implemented");
 }
 
 void update_engines_console(
-		engines_console_state_struct* wcss,
-		gamestate_struct* gs) {
-	warnx("update_engines_console not yet implemented");
+			    engines_console_state_struct* ecss,
+			    gamestate_struct* gs) {
+  gs->shipstate.engine_heat = ecss->engine_heat;
+  gs->shipstate.curr_flight_state = ecss->curr_flight_state;
+  //warnx("update_engines_console not yet implemented");
 }
 //==========================
 
@@ -175,7 +235,7 @@ void update_input_repairs_console(
 		int client_index, 
 		repairs_console_state_struct* wcss,
 		gamestate_struct* gs) {
-	warnx("update_input_repairs_console not yet implemented");
+  	warnx("update_input_repairs_console not yet implemented");
 }
 
 void update_repairs_console(
@@ -284,6 +344,3 @@ void update_ftl_console(
 	fcss->charge = fclamp(fcss->charge + 1.0f/600.0f, 0, 1);
 }
 //==========================
-
-
-
