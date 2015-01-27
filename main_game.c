@@ -309,6 +309,7 @@ void setup_game(gamestate_struct* gs){
 			tile_index = SHIP_TILES_INDEX(i, j, stsp);
 
 			temp_ts.console_state_ptr = NULL;
+			temp_ts.metadata = 0;
 			switch(temp_buff[tile_index]) {
 				case ' ':
 				case '-':

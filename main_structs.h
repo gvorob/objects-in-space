@@ -5,6 +5,8 @@
 #define RIGHT 'd'
 #define UP 'w'
 #define DOWN 's'
+#define CONFIRM 'e'
+#define CANCEL 'q'
 #define CONSOLE_LOCK ' '
 
 #include "util.h"
@@ -15,6 +17,8 @@ typedef struct _client_input_struct {
   int right;
   int up;
   int down;
+  int confirm;
+  int cancel;
   int console_lock;
   //more TBD
 } client_input_struct;
@@ -57,8 +61,9 @@ typedef enum _tile_type {
 } tile_type;
 
 typedef struct _tile_struct {
-  tile_type type;
-  void* console_state_ptr;
+	tile_type type;
+	int metadata;
+	void* console_state_ptr;
 } tile_struct;
 
 typedef struct _ship_tiles_struct {

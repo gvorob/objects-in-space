@@ -110,6 +110,10 @@ void send_input(){
 			  cis.left = 1;
 			} else if (ch == RIGHT){
 			  cis.right = 1;
+			} else if (ch == CONFIRM){
+			  cis.confirm = 1;
+			} else if (ch == CANCEL){
+			  cis.cancel = 1;
 			} else if (ch == CONSOLE_LOCK){
 			  cis.console_lock = 1;
 			} else {
