@@ -52,7 +52,7 @@ Pretty Pictures
 ---------------
 
 Game Lobby
-[Game Lobby](lobby-cropped.png)
+![Game Lobby](lobby-cropped.png)
 
 Main game
-[Spaceship Screen](spaceship-cropped.png)
+![Spaceship Screen](spaceship-cropped.png)
