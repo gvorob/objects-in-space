@@ -48,3 +48,11 @@ How to Run
 ./space --client -ipxxx.xxx.xxx.xxx
 note - connects on port 9998
 
+Pretty Pictures
+---------------
+
+Game Lobby
+[Game Lobby](lobby-cropped.png)
+
+Main game
+[Spaceship Screen](spaceship-cropped.png)
