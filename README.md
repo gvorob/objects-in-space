@@ -1,6 +1,8 @@
 # Objects in Space
 Spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaace
 
+This is a networked console game written in a high-school systems class.
+
 Members
 -------
 * Vanessa Yan
